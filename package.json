@@ -1,0 +1,89 @@
+{
+    "author": "mauroguerrera92@gmail.com",
+    "dependencies": {},
+    "keywords": [],
+    "name": "q-time",
+    "pebble": {
+        "displayName": "Q-Time",
+        "enableMultiJS": true,
+        "messageKeys": [],
+        "projectType": "native",
+        "resources": {
+            "media": [
+                {
+                    "file": "images/battery_charging",
+                    "name": "IMAGE_BATTERY_CH",
+                    "targetPlatforms": [
+                        "basalt"
+                    ],
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/battery_low",
+                    "name": "IMAGE_BATTERY_LOW",
+                    "targetPlatforms": [
+                        "basalt"
+                    ],
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/battery_very_low",
+                    "name": "IMAGE_BATTERY_VERY_LOW",
+                    "targetPlatforms": [
+                        "basalt"
+                    ],
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/battery",
+                    "name": "IMAGE_BATTERY",
+                    "targetPlatforms": [
+                        "basalt"
+                    ],
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/quiet_off",
+                    "name": "IMAGE_VIBE",
+                    "targetPlatforms": [
+                        "basalt"
+                    ],
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/quiet_on",
+                    "name": "IMAGE_QUIET",
+                    "targetPlatforms": [
+                        "basalt"
+                    ],
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/disconnected",
+                    "name": "IMAGE_DISCONNECTED",
+                    "targetPlatforms": [
+                        "basalt"
+                    ],
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/connected",
+                    "name": "IMAGE_CONNECTED",
+                    "targetPlatforms": [
+                        "basalt"
+                    ],
+                    "type": "bitmap"
+                }
+            ]
+        },
+        "sdkVersion": "3",
+        "targetPlatforms": [
+            "basalt"
+        ],
+        "uuid": "3b67dd09-94ca-4e34-abdb-0101cd66b167",
+        "watchapp": {
+            "watchface": true
+        }
+    },
+    "version": "0.1.0"
+}

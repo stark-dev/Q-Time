@@ -21,6 +21,10 @@ static bool      s_vibration = false;
 static char      s_time_text[] = "00:00";
 static char      s_date_text[] = "02 Dec";
 static char      s_day_text[] = "Wednesday";
+// Static variables - fonts
+static GFont     s_clock_font;
+static GFont     s_date_font;
+static GFont     s_day_font;
 
 /********************************** Handlers *********************************/
 
@@ -63,8 +67,8 @@ static void update_canvas(Layer *layer, GContext *ctx){
   
   // Draw battery status 
   
-  GRect battery_level = GRect(54, 0, 34, 34);
-  GRect battery_image = GRect(61, 7, 20, 20);
+  GRect battery_level = GRect(54, 10, 34, 34);
+  GRect battery_image = GRect(61, 17, 20, 20);
   
   // Battery icon
   if(s_charging){
@@ -81,7 +85,7 @@ static void update_canvas(Layer *layer, GContext *ctx){
   }
 
   // Battery circle
-  graphics_context_set_stroke_color(ctx, GColorDarkGreen);
+  graphics_context_set_stroke_color(ctx, GColorDarkGray);
   graphics_context_set_stroke_width(ctx, 2);
   if(s_charging){
     graphics_context_set_fill_color(ctx, GColorYellow);
@@ -93,13 +97,13 @@ static void update_canvas(Layer *layer, GContext *ctx){
     graphics_context_set_fill_color(ctx, GColorRed);
   }
   else {
-    graphics_context_set_fill_color(ctx, GColorGreen);
+    graphics_context_set_fill_color(ctx, GColorWhite);
   }
   graphics_draw_circle(ctx, grect_center_point(&battery_level), 15);
   graphics_fill_radial(ctx, battery_level, GOvalScaleModeFitCircle, 5, DEG_TO_TRIGANGLE(0), DEG_TO_TRIGANGLE((s_battery_level*360)/100));
   
   // Bluetooth status
-  GRect bt_rect = GRect(0, 0, 48, 30);
+  GRect bt_rect = GRect(0, 10, 48, 30);
 
   if(s_bt_connected){
     graphics_draw_bitmap_in_rect(ctx, s_bt_conn, bt_rect);
@@ -108,8 +112,14 @@ static void update_canvas(Layer *layer, GContext *ctx){
     graphics_draw_bitmap_in_rect(ctx, s_bt_disc, bt_rect);
   }
   
+  // Bluetooth circle
+  graphics_context_set_stroke_color(ctx, GColorWhite);
+  graphics_context_set_stroke_width(ctx, 2);
+  
+  graphics_draw_circle(ctx, grect_center_point(&bt_rect), 16);
+  
   // Quiet time status
-  GRect quiet_rect = GRect(96, 0, 48, 30);
+  GRect quiet_rect = GRect(96, 10, 48, 30);
   
   if(quiet_time_is_active()){
     graphics_draw_bitmap_in_rect(ctx, s_quiet_on, quiet_rect);
@@ -117,6 +127,12 @@ static void update_canvas(Layer *layer, GContext *ctx){
   else {
     graphics_draw_bitmap_in_rect(ctx, s_quiet_off, quiet_rect);
   }
+  
+  // Quiet status circle
+  graphics_context_set_stroke_color(ctx, GColorWhite);
+  graphics_context_set_stroke_width(ctx, 2);
+  
+  graphics_draw_circle(ctx, grect_center_point(&quiet_rect), 16);
   
   // Update text
   strftime(s_time_text, sizeof(s_time_text), "%T", tick_time);
@@ -135,29 +151,34 @@ static void main_window_load(Window *window) {
   // Disable vibration at startup
   s_vibration = false;
   
+  // Add custom fonts
+  s_clock_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_CLOCK_48));
+  s_date_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_DATE_22));
+  s_day_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_DAY_16));
+  
   Layer *window_layer = window_get_root_layer(window);
   GRect bounds = layer_get_frame(window_layer);
   
   // Time Layer
-  s_time_layer = text_layer_create(GRect(0, 40, bounds.size.w, 52));
+  s_time_layer = text_layer_create(GRect(0, 48, bounds.size.w, 52));
   text_layer_set_text_color(s_time_layer, GColorFromRGB(251, 216, 62));
   text_layer_set_background_color(s_time_layer, GColorClear);
-  text_layer_set_font(s_time_layer, fonts_get_system_font(FONT_KEY_ROBOTO_BOLD_SUBSET_49));
+  text_layer_set_font(s_time_layer, s_clock_font);
   text_layer_set_text_alignment(s_time_layer, GTextAlignmentCenter);
   
   // Day Layer
-  s_day_layer = text_layer_create(GRect(0, 98, bounds.size.w, 20));
+  s_day_layer = text_layer_create(GRect(0, 108, bounds.size.w, 22));
   text_layer_set_text_color(s_day_layer, GColorFromRGB(0, 196, 185));
   text_layer_set_background_color(s_day_layer, GColorClear);
-  text_layer_set_font(s_day_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18));
+  text_layer_set_font(s_day_layer, s_day_font);
   text_layer_set_text_alignment(s_day_layer, GTextAlignmentCenter);
   text_layer_set_text(s_day_layer, "Wednesday");
   
   // Date Layer
-  s_date_layer = text_layer_create(GRect(0, 120, bounds.size.w, 30));
+  s_date_layer = text_layer_create(GRect(0, 130, bounds.size.w, 30));
   text_layer_set_text_color(s_date_layer, GColorWhite);
   text_layer_set_background_color(s_date_layer, GColorClear);
-  text_layer_set_font(s_date_layer, fonts_get_system_font(FONT_KEY_GOTHIC_28));
+  text_layer_set_font(s_date_layer, s_date_font);
   text_layer_set_text_alignment(s_date_layer, GTextAlignmentCenter);
   text_layer_set_text(s_date_layer, "02 Dec");
 
@@ -226,6 +247,9 @@ static void main_window_unload(Window *window) {
   text_layer_destroy(s_date_layer);
   text_layer_destroy(s_day_layer);
   layer_destroy(s_canvas_layer);
+  fonts_unload_custom_font(s_clock_font);
+  fonts_unload_custom_font(s_date_font);
+  fonts_unload_custom_font(s_day_font);
 }
 
 static void init() {

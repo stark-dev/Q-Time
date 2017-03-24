@@ -1,5 +1,5 @@
 {
-    "author": "mauroguerrera92@gmail.com",
+    "author": "stark-dev",
     "dependencies": {},
     "keywords": [],
     "name": "q-time",
@@ -10,6 +10,39 @@
         "projectType": "native",
         "resources": {
             "media": [
+                {
+                    "file": "images/menu_image",
+                    "menuIcon": true,
+                    "name": "IMAGE_MENU",
+                    "targetPlatforms": [
+                        "basalt"
+                    ],
+                    "type": "bitmap"
+                },
+                {
+                    "file": "fonts/font_clock",
+                    "name": "FONT_CLOCK_48",
+                    "targetPlatforms": [
+                        "basalt"
+                    ],
+                    "type": "font"
+                },
+                {
+                    "file": "fonts/font_date",
+                    "name": "FONT_DATE_22",
+                    "targetPlatforms": [
+                        "basalt"
+                    ],
+                    "type": "font"
+                },
+                {
+                    "file": "fonts/font_day",
+                    "name": "FONT_DAY_16",
+                    "targetPlatforms": [
+                        "basalt"
+                    ],
+                    "type": "font"
+                },
                 {
                     "file": "images/battery_charging",
                     "name": "IMAGE_BATTERY_CH",

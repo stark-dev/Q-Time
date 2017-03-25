@@ -69,8 +69,8 @@ static void update_canvas(Layer *layer, GContext *ctx){
   
   // Draw battery status 
   
-  GRect battery_level = GRect(57, 10, 32, 32);
-  GRect battery_image = GRect(63, 16, 20, 20);
+  GRect battery_level = GRect(57, 11, 32, 32);
+  GRect battery_image = GRect(63, 17, 20, 20);
   
   // Battery icon
   if(s_charging){
@@ -105,7 +105,7 @@ static void update_canvas(Layer *layer, GContext *ctx){
   graphics_fill_radial(ctx, battery_level, GOvalScaleModeFitCircle, 5, DEG_TO_TRIGANGLE(0), DEG_TO_TRIGANGLE((s_battery_level*360)/100));
   
   // Bluetooth status
-  GRect bt_rect = GRect(4, 10, 48, 30);
+  GRect bt_rect = GRect(4, 11, 48, 30);
 
   if(s_bt_connected){
     graphics_draw_bitmap_in_rect(ctx, s_bt_conn, bt_rect);
@@ -121,7 +121,7 @@ static void update_canvas(Layer *layer, GContext *ctx){
   graphics_draw_circle(ctx, grect_center_point(&bt_rect), 13);
   
   // Quiet time status
-  GRect quiet_rect = GRect(92, 10, 48, 30);
+  GRect quiet_rect = GRect(92, 11, 48, 30);
   
   if(quiet_time_is_active()){
     graphics_draw_bitmap_in_rect(ctx, s_quiet_on, quiet_rect);
@@ -162,14 +162,14 @@ static void main_window_load(Window *window) {
   GRect bounds = layer_get_frame(window_layer);
   
   // Time Layer
-  s_time_layer = text_layer_create(GRect(0, 48, bounds.size.w, 52));
+  s_time_layer = text_layer_create(GRect(0, 46, bounds.size.w, 52));
   text_layer_set_text_color(s_time_layer, COLOR_YELLOW);
   text_layer_set_background_color(s_time_layer, GColorClear);
   text_layer_set_font(s_time_layer, s_clock_font);
   text_layer_set_text_alignment(s_time_layer, GTextAlignmentCenter);
   
   // Day Layer
-  s_day_layer = text_layer_create(GRect(0, 108, bounds.size.w, 22));
+  s_day_layer = text_layer_create(GRect(0, 107, bounds.size.w, 22));
   text_layer_set_text_color(s_day_layer, GColorFromRGB(0, 196, 185));
   text_layer_set_background_color(s_day_layer, GColorClear);
   text_layer_set_font(s_day_layer, s_day_font);

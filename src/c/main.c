@@ -169,7 +169,7 @@ static void main_window_load(Window *window) {
   text_layer_set_text_alignment(s_time_layer, GTextAlignmentCenter);
   
   // Day Layer
-  s_day_layer = text_layer_create(GRect(0, 107, bounds.size.w, 22));
+  s_day_layer = text_layer_create(GRect(0, 106, bounds.size.w, 22));
   text_layer_set_text_color(s_day_layer, GColorFromRGB(0, 196, 185));
   text_layer_set_background_color(s_day_layer, GColorClear);
   text_layer_set_font(s_day_layer, s_day_font);

@@ -1,5 +1,7 @@
 #include <pebble.h>
 
+#define COLOR_YELLOW GColorFromRGB(251, 216, 62)
+
 // Window
 static Window    *s_main_window;
 // Layers
@@ -67,8 +69,8 @@ static void update_canvas(Layer *layer, GContext *ctx){
   
   // Draw battery status 
   
-  GRect battery_level = GRect(54, 10, 34, 34);
-  GRect battery_image = GRect(61, 17, 20, 20);
+  GRect battery_level = GRect(57, 10, 32, 32);
+  GRect battery_image = GRect(63, 16, 20, 20);
   
   // Battery icon
   if(s_charging){
@@ -88,10 +90,10 @@ static void update_canvas(Layer *layer, GContext *ctx){
   graphics_context_set_stroke_color(ctx, GColorDarkGray);
   graphics_context_set_stroke_width(ctx, 2);
   if(s_charging){
-    graphics_context_set_fill_color(ctx, GColorYellow);
+    graphics_context_set_fill_color(ctx, COLOR_YELLOW);
   }
   else if(s_battery_level <= 20 && s_battery_level > 10){
-    graphics_context_set_fill_color(ctx, GColorYellow);
+    graphics_context_set_fill_color(ctx, COLOR_YELLOW);
   }
   else if(s_battery_level <= 10){
     graphics_context_set_fill_color(ctx, GColorRed);
@@ -103,36 +105,36 @@ static void update_canvas(Layer *layer, GContext *ctx){
   graphics_fill_radial(ctx, battery_level, GOvalScaleModeFitCircle, 5, DEG_TO_TRIGANGLE(0), DEG_TO_TRIGANGLE((s_battery_level*360)/100));
   
   // Bluetooth status
-  GRect bt_rect = GRect(0, 10, 48, 30);
+  GRect bt_rect = GRect(4, 10, 48, 30);
 
   if(s_bt_connected){
     graphics_draw_bitmap_in_rect(ctx, s_bt_conn, bt_rect);
+    graphics_context_set_stroke_color(ctx, GColorWhite);
   }
   else {
     graphics_draw_bitmap_in_rect(ctx, s_bt_disc, bt_rect);
+    graphics_context_set_stroke_color(ctx, GColorDarkGray);
   }
   
   // Bluetooth circle
-  graphics_context_set_stroke_color(ctx, GColorWhite);
   graphics_context_set_stroke_width(ctx, 2);
-  
-  graphics_draw_circle(ctx, grect_center_point(&bt_rect), 16);
+  graphics_draw_circle(ctx, grect_center_point(&bt_rect), 12);
   
   // Quiet time status
-  GRect quiet_rect = GRect(96, 10, 48, 30);
+  GRect quiet_rect = GRect(92, 10, 48, 30);
   
   if(quiet_time_is_active()){
     graphics_draw_bitmap_in_rect(ctx, s_quiet_on, quiet_rect);
+    graphics_context_set_stroke_color(ctx, GColorDarkGray);
   }
   else {
     graphics_draw_bitmap_in_rect(ctx, s_quiet_off, quiet_rect);
+    graphics_context_set_stroke_color(ctx, GColorWhite);
   }
   
   // Quiet status circle
-  graphics_context_set_stroke_color(ctx, GColorWhite);
   graphics_context_set_stroke_width(ctx, 2);
-  
-  graphics_draw_circle(ctx, grect_center_point(&quiet_rect), 16);
+  graphics_draw_circle(ctx, grect_center_point(&quiet_rect), 12);
   
   // Update text
   strftime(s_time_text, sizeof(s_time_text), "%T", tick_time);
@@ -161,7 +163,7 @@ static void main_window_load(Window *window) {
   
   // Time Layer
   s_time_layer = text_layer_create(GRect(0, 48, bounds.size.w, 52));
-  text_layer_set_text_color(s_time_layer, GColorFromRGB(251, 216, 62));
+  text_layer_set_text_color(s_time_layer, COLOR_YELLOW);
   text_layer_set_background_color(s_time_layer, GColorClear);
   text_layer_set_font(s_time_layer, s_clock_font);
   text_layer_set_text_alignment(s_time_layer, GTextAlignmentCenter);

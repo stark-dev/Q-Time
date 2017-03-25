@@ -101,7 +101,7 @@ static void update_canvas(Layer *layer, GContext *ctx){
   else {
     graphics_context_set_fill_color(ctx, GColorWhite);
   }
-  graphics_draw_circle(ctx, grect_center_point(&battery_level), 15);
+  graphics_draw_circle(ctx, grect_center_point(&battery_level), 14);
   graphics_fill_radial(ctx, battery_level, GOvalScaleModeFitCircle, 5, DEG_TO_TRIGANGLE(0), DEG_TO_TRIGANGLE((s_battery_level*360)/100));
   
   // Bluetooth status
@@ -118,7 +118,7 @@ static void update_canvas(Layer *layer, GContext *ctx){
   
   // Bluetooth circle
   graphics_context_set_stroke_width(ctx, 2);
-  graphics_draw_circle(ctx, grect_center_point(&bt_rect), 12);
+  graphics_draw_circle(ctx, grect_center_point(&bt_rect), 13);
   
   // Quiet time status
   GRect quiet_rect = GRect(92, 10, 48, 30);
@@ -134,7 +134,7 @@ static void update_canvas(Layer *layer, GContext *ctx){
   
   // Quiet status circle
   graphics_context_set_stroke_width(ctx, 2);
-  graphics_draw_circle(ctx, grect_center_point(&quiet_rect), 12);
+  graphics_draw_circle(ctx, grect_center_point(&quiet_rect), 13);
   
   // Update text
   strftime(s_time_text, sizeof(s_time_text), "%T", tick_time);

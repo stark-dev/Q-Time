@@ -1,12 +1,21 @@
 {
     "author": "stark-dev",
-    "dependencies": {},
+    "dependencies": {
+        "pebble-clay": "^1.0.3"
+    },
     "keywords": [],
     "name": "q-time",
     "pebble": {
+        "capabilities": [
+            "configurable"
+        ],
         "displayName": "Q-Time",
         "enableMultiJS": true,
-        "messageKeys": [],
+        "messageKeys": [
+            "background_color",
+            "text_color",
+            "h12_24"
+        ],
         "projectType": "native",
         "resources": {
             "media": [
@@ -118,5 +127,5 @@
             "watchface": true
         }
     },
-    "version": "0.3.0"
+    "version": "0.5.0"
 }

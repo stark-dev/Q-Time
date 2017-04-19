@@ -25,6 +25,24 @@ module.exports = [
         "messageKey": "text_color",
         "defaultValue": "0xFFFFFF",
         "label": "Text Color"
+      },
+      {
+        "type": "color",
+        "messageKey": "day_color",
+        "defaultValue": "0xFFFFFF",
+        "label": "Day Color"
+      },
+      {
+        "type": "color",
+        "messageKey": "date_color",
+        "defaultValue": "0xFFFFFF",
+        "label": "Date Color"
+      },
+      {
+        "type": "color",
+        "messageKey": "dial_color",
+        "defaultValue": "0xFFFFFF",
+        "label": "Dial Color"
       }
     ]
   },

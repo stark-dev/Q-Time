@@ -7,6 +7,10 @@
 typedef struct ClaySettings {
   GColor background_color;
   GColor time_color;
+  GColor day_color;
+  GColor date_color;
+  GColor dial_color;
+//  bool default_settings;
   bool h12_24;
 } ClaySettings;
 
@@ -38,12 +42,6 @@ static char      s_day_text[] = "Wednesday";
 static GFont     s_clock_font;
 static GFont     s_date_font;
 static GFont     s_day_font;
-// Gcolors
-static GColor    s_background_color;// = GColorBlack;
-static GColor    s_time_color;// = GColorFromRGB(251, 216, 62);
-static GColor    s_day_color;// = GColorFromRGB(0, 196, 185);
-static GColor    s_date_color;// = GColorWhite;
-static GColor    s_dial_color;// = GColorWhite;
 
 /********************************** Handlers *********************************/
 
@@ -73,16 +71,26 @@ static void bluetooth_callback(bool connected) {
   layer_mark_dirty(s_canvas_layer);
 }
 
-// Color settings
-static void set_colors(){
-  s_background_color = settings.background_color;//GColorBlack;
-  s_time_color = settings.time_color;//GColorFromRGB(251, 216, 62);
-  s_day_color = GColorFromRGB(0, 196, 185);
-  s_date_color = GColorWhite;
-  s_dial_color = GColorWhite;
+// Clay interface
+// Initialize the default settings
+static void prv_default_settings() {
+  settings.background_color = GColorBlack;
+  settings.time_color = GColorFromRGB(251, 216, 62);
+  settings.day_color = GColorFromRGB(0, 196, 185);
+  settings.date_color = GColorWhite;
+  settings.dial_color = GColorWhite;
+//  settings.default_settings = true;
+  settings.h12_24 = false;
 }
 
-// Clay interface
+// Read settings from persistent storage
+static void prv_load_settings() {
+  // Load the default settings
+  prv_default_settings();
+  // Read settings from persistent storage, if they exist
+  persist_read_data(SETTINGS_KEY, &settings, sizeof(settings));
+}
+
 // Save the settings to persistent storage
 static void prv_save_settings() {
   persist_write_data(SETTINGS_KEY, &settings, sizeof(settings));
@@ -95,28 +103,44 @@ static void prv_inbox_received_handler(DictionaryIterator *iter, void *context) 
     settings.background_color = GColorFromHEX(bg_color_t->value->int32);
   }
 
-  Tuple *fg_color_t = dict_find(iter, MESSAGE_KEY_text_color);
-  if(fg_color_t) {
-    settings.time_color = GColorFromHEX(fg_color_t->value->int32);
+  Tuple *time_color_t = dict_find(iter, MESSAGE_KEY_text_color);
+  if(time_color_t) {
+    settings.time_color = GColorFromHEX(time_color_t->value->int32);
+  }
+  
+  Tuple *day_color_t = dict_find(iter, MESSAGE_KEY_day_color);
+  if(day_color_t) {
+    settings.day_color = GColorFromHEX(day_color_t->value->int32);
+  }
+  
+  Tuple *date_color_t = dict_find(iter, MESSAGE_KEY_date_color);
+  if(date_color_t) {
+    settings.date_color = GColorFromHEX(date_color_t->value->int32);
+  }
+  
+  Tuple *dial_color_t = dict_find(iter, MESSAGE_KEY_dial_color);
+  if(dial_color_t) {
+    settings.dial_color = GColorFromHEX(dial_color_t->value->int32);
   }
 
   // Read boolean preferences
+//  Tuple *default_settings_t = dict_find(iter, MESSAGE_KEY_default_settings);
+//  if(default_settings_t) {
+//    settings.default_settings = default_settings_t->value->int32 == 1;
+//  }
+  
   Tuple *h12_24_t = dict_find(iter, MESSAGE_KEY_h12_24);
   if(h12_24_t) {
     settings.h12_24 = h12_24_t->value->int32 == 1;
   }
-  set_colors();
+  
   prv_save_settings();
 }
 
 void prv_init(void) {
-  // ...
-
   // Open AppMessage connection
   app_message_register_inbox_received(prv_inbox_received_handler);
   app_message_open(128, 128);
-
-  // ...
 }
 
 /********************************* Draw Layers *******************************/
@@ -153,16 +177,16 @@ static void update_canvas(Layer *layer, GContext *ctx){
   graphics_context_set_stroke_color(ctx, GColorDarkGray);
   graphics_context_set_stroke_width(ctx, 2);
   if(s_charging){
-    graphics_context_set_fill_color(ctx, s_time_color);
+    graphics_context_set_fill_color(ctx, settings.time_color);
   }
   else if(s_battery_level <= 20 && s_battery_level > 10){
-    graphics_context_set_fill_color(ctx, s_time_color);
+    graphics_context_set_fill_color(ctx, settings.time_color);
   }
   else if(s_battery_level <= 10){
     graphics_context_set_fill_color(ctx, GColorRed);
   }
   else {
-    graphics_context_set_fill_color(ctx, s_dial_color);
+    graphics_context_set_fill_color(ctx, settings.dial_color);
   }
   graphics_draw_circle(ctx, grect_center_point(&battery_level), 14);
   graphics_fill_radial(ctx, battery_level, GOvalScaleModeFitCircle, 5, DEG_TO_TRIGANGLE(0), DEG_TO_TRIGANGLE((s_battery_level*360)/100));
@@ -172,7 +196,7 @@ static void update_canvas(Layer *layer, GContext *ctx){
 
   if(s_bt_connected){
     graphics_draw_bitmap_in_rect(ctx, s_bt_conn, bt_rect);
-    graphics_context_set_stroke_color(ctx, s_dial_color);
+    graphics_context_set_stroke_color(ctx, settings.dial_color);
   }
   else {
     graphics_draw_bitmap_in_rect(ctx, s_bt_disc, bt_rect);
@@ -192,7 +216,7 @@ static void update_canvas(Layer *layer, GContext *ctx){
   }
   else {
     graphics_draw_bitmap_in_rect(ctx, s_quiet_off, quiet_rect);
-    graphics_context_set_stroke_color(ctx, s_dial_color);
+    graphics_context_set_stroke_color(ctx, settings.dial_color);
   }
   
   // Quiet status circle
@@ -226,14 +250,14 @@ static void main_window_load(Window *window) {
   
   // Time Layer
   s_time_layer = text_layer_create(GRect(0, 46, bounds.size.w, 52));
-  text_layer_set_text_color(s_time_layer, s_time_color);
+  text_layer_set_text_color(s_time_layer, settings.time_color);
   text_layer_set_background_color(s_time_layer, GColorClear);
   text_layer_set_font(s_time_layer, s_clock_font);
   text_layer_set_text_alignment(s_time_layer, GTextAlignmentCenter);
   
   // Day Layer
   s_day_layer = text_layer_create(GRect(0, 106, bounds.size.w, 22));
-  text_layer_set_text_color(s_day_layer, s_day_color);
+  text_layer_set_text_color(s_day_layer, settings.day_color);
   text_layer_set_background_color(s_day_layer, GColorClear);
   text_layer_set_font(s_day_layer, s_day_font);
   text_layer_set_text_alignment(s_day_layer, GTextAlignmentCenter);
@@ -241,7 +265,7 @@ static void main_window_load(Window *window) {
   
   // Date Layer
   s_date_layer = text_layer_create(GRect(0, 130, bounds.size.w, 30));
-  text_layer_set_text_color(s_date_layer, s_date_color);
+  text_layer_set_text_color(s_date_layer, settings.date_color);
   text_layer_set_background_color(s_date_layer, GColorClear);
   text_layer_set_font(s_date_layer, s_date_font);
   text_layer_set_text_alignment(s_date_layer, GTextAlignmentCenter);
@@ -285,9 +309,6 @@ static void main_window_load(Window *window) {
   // Update connection
   bluetooth_callback(connection_service_peek_pebble_app_connection());
   
-  // Clay interface
-  prv_init();
-  
   // Retrieve time
   time_t now = time(NULL);
   struct tm *current_time = localtime(&now);
@@ -321,9 +342,11 @@ static void main_window_unload(Window *window) {
 }
 
 static void init() {
-  set_colors();
+  prv_load_settings();
+  prv_init();
+  
   s_main_window = window_create();
-  window_set_background_color(s_main_window, s_background_color);
+  window_set_background_color(s_main_window, settings.background_color);
   window_set_window_handlers(s_main_window, (WindowHandlers) {
     .load = main_window_load,
     .unload = main_window_unload,

@@ -155,13 +155,51 @@ static void update_canvas(Layer *layer, GContext *ctx){
   struct tm *tick_time = localtime(&now);
   
   graphics_context_set_stroke_color(ctx, GColorWhite);
-  graphics_context_set_fill_color(ctx, GColorBlack);
+  graphics_context_set_fill_color(ctx, settings.background_color);
   graphics_context_set_stroke_width(ctx, 1);
+  graphics_context_set_compositing_mode(ctx, GCompOpSet);
+  
+  // Bluetooth status
+  GRect bt_rect = GRect(4, 11, 48, 30);
+  graphics_fill_rect(ctx, bt_rect, 0, GCornerNone);
+
+  if(s_bt_connected){
+    graphics_draw_bitmap_in_rect(ctx, s_bt_conn, bt_rect);
+    graphics_context_set_stroke_color(ctx, settings.dial_color);
+  }
+  else {
+    graphics_draw_bitmap_in_rect(ctx, s_bt_disc, bt_rect);
+    graphics_context_set_stroke_color(ctx, GColorDarkGray);
+  }
+  
+  // Bluetooth circle
+  graphics_context_set_stroke_width(ctx, 2);
+  graphics_draw_circle(ctx, grect_center_point(&bt_rect), 13);
+  
+  // Quiet time status
+  GRect quiet_rect = GRect(92, 11, 48, 30);
+  graphics_fill_rect(ctx, quiet_rect, 0, GCornerNone);
+  
+  if(quiet_time_is_active()){
+    graphics_draw_bitmap_in_rect(ctx, s_quiet_on, quiet_rect);
+    graphics_context_set_stroke_color(ctx, GColorDarkGray);
+  }
+  else {
+    graphics_draw_bitmap_in_rect(ctx, s_quiet_off, quiet_rect);
+    graphics_context_set_stroke_color(ctx, settings.dial_color);
+  }
+  
+  // Quiet status circle
+  graphics_context_set_stroke_width(ctx, 2);
+  graphics_draw_circle(ctx, grect_center_point(&quiet_rect), 13);
   
   // Draw battery status 
   
   GRect battery_level = GRect(57, 11, 32, 32);
   GRect battery_image = GRect(63, 17, 20, 20);
+  
+  graphics_fill_rect(ctx, battery_level, 0, GCornerNone);
+  graphics_fill_rect(ctx, battery_image, 0, GCornerNone);
   
   // Battery icon
   if(s_charging){
@@ -194,38 +232,6 @@ static void update_canvas(Layer *layer, GContext *ctx){
   }
   graphics_draw_circle(ctx, grect_center_point(&battery_level), 14);
   graphics_fill_radial(ctx, battery_level, GOvalScaleModeFitCircle, 5, DEG_TO_TRIGANGLE(0), DEG_TO_TRIGANGLE((s_battery_level*360)/100));
-  
-  // Bluetooth status
-  GRect bt_rect = GRect(4, 11, 48, 30);
-
-  if(s_bt_connected){
-    graphics_draw_bitmap_in_rect(ctx, s_bt_conn, bt_rect);
-    graphics_context_set_stroke_color(ctx, settings.dial_color);
-  }
-  else {
-    graphics_draw_bitmap_in_rect(ctx, s_bt_disc, bt_rect);
-    graphics_context_set_stroke_color(ctx, GColorDarkGray);
-  }
-  
-  // Bluetooth circle
-  graphics_context_set_stroke_width(ctx, 2);
-  graphics_draw_circle(ctx, grect_center_point(&bt_rect), 13);
-  
-  // Quiet time status
-  GRect quiet_rect = GRect(92, 11, 48, 30);
-  
-  if(quiet_time_is_active()){
-    graphics_draw_bitmap_in_rect(ctx, s_quiet_on, quiet_rect);
-    graphics_context_set_stroke_color(ctx, GColorDarkGray);
-  }
-  else {
-    graphics_draw_bitmap_in_rect(ctx, s_quiet_off, quiet_rect);
-    graphics_context_set_stroke_color(ctx, settings.dial_color);
-  }
-  
-  // Quiet status circle
-  graphics_context_set_stroke_width(ctx, 2);
-  graphics_draw_circle(ctx, grect_center_point(&quiet_rect), 13);
   
   // Update text
   strftime(s_time_text, sizeof(s_time_text), "%T", tick_time);

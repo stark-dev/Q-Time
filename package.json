@@ -17,6 +17,7 @@
             "day_color",
             "date_color",
             "dial_color",
+            "default_settings",
             "h12_24"
         ],
         "projectType": "native",

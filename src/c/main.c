@@ -10,7 +10,7 @@ typedef struct ClaySettings {
   GColor day_color;
   GColor date_color;
   GColor dial_color;
-//  bool default_settings;
+  bool default_settings;
   bool h12_24;
 } ClaySettings;
 
@@ -79,7 +79,7 @@ static void prv_default_settings() {
   settings.day_color = GColorFromRGB(0, 196, 185);
   settings.date_color = GColorWhite;
   settings.dial_color = GColorWhite;
-//  settings.default_settings = true;
+  settings.default_settings = true;
   settings.h12_24 = false;
 }
 
@@ -124,16 +124,20 @@ static void prv_inbox_received_handler(DictionaryIterator *iter, void *context) 
   }
 
   // Read boolean preferences
-//  Tuple *default_settings_t = dict_find(iter, MESSAGE_KEY_default_settings);
-//  if(default_settings_t) {
-//    settings.default_settings = default_settings_t->value->int32 == 1;
-//  }
+  Tuple *default_settings_t = dict_find(iter, MESSAGE_KEY_default_settings);
+  if(default_settings_t) {
+    settings.default_settings = default_settings_t->value->int32 == 1;
+  }
   
   Tuple *h12_24_t = dict_find(iter, MESSAGE_KEY_h12_24);
   if(h12_24_t) {
     settings.h12_24 = h12_24_t->value->int32 == 1;
   }
   
+  if(settings.default_settings){
+    // Load the default settings
+    prv_default_settings();
+  }  
   prv_save_settings();
 }
 

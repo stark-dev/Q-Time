@@ -55,6 +55,12 @@ module.exports = [
       },
       {
         "type": "toggle",
+        "messageKey": "default_settings",
+        "label": "Use default settings",
+        "defaultValue": true
+      },
+      {
+        "type": "toggle",
         "messageKey": "h12_24",
         "label": "12/24 h format",
         "defaultValue": false

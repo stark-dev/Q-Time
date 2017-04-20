@@ -11,7 +11,7 @@ typedef struct ClaySettings {
   GColor date_color;
   GColor dial_color;
   bool default_settings;
-  bool h12_24;
+  int date_format;
 } ClaySettings;
 
 // An instance of the struct
@@ -24,6 +24,7 @@ static Layer     *s_canvas_layer;
 static TextLayer *s_time_layer;
 static TextLayer *s_date_layer;
 static TextLayer *s_day_layer;
+static TextLayer *s_am_pm_layer;
 static GBitmap   *s_bt_conn, *s_bt_disc;
 static GBitmap   *s_quiet_on, *s_quiet_off;
 static GBitmap   *s_battery, *s_battery_low, *s_battery_very_low, *s_battery_ch;
@@ -36,12 +37,14 @@ static bool      s_bt_connected = false;
 static bool      s_vibration = false;
 // Static variables - text
 static char      s_time_text[] = "00:00";
+static char      s_am_pm_text[] = "AM";
 static char      s_date_text[] = "02 Dec";
 static char      s_day_text[] = "Wednesday";
 // Static variables - fonts
-static GFont     s_clock_font;
-static GFont     s_date_font;
-static GFont     s_day_font;
+static GFont     s_lato_font_48;
+static GFont     s_lato_font_40;
+static GFont     s_lato_font_22;
+static GFont     s_lato_font_16;
 
 /********************************** Handlers *********************************/
 
@@ -80,7 +83,7 @@ static void prv_default_settings() {
   settings.date_color = GColorWhite;
   settings.dial_color = GColorWhite;
   settings.default_settings = true;
-  settings.h12_24 = false;
+  settings.date_format = 0;
 }
 
 // Read settings from persistent storage
@@ -129,9 +132,10 @@ static void prv_inbox_received_handler(DictionaryIterator *iter, void *context) 
     settings.default_settings = default_settings_t->value->int32 == 1;
   }
   
-  Tuple *h12_24_t = dict_find(iter, MESSAGE_KEY_h12_24);
-  if(h12_24_t) {
-    settings.h12_24 = h12_24_t->value->int32 == 1;
+  // Read radio preferences
+  Tuple *date_format_t = dict_find(iter, MESSAGE_KEY_date_format);
+  if(date_format_t) {
+    settings.date_format = date_format_t->value->int32;
   }
   
   if(settings.default_settings){
@@ -251,9 +255,10 @@ static void main_window_load(Window *window) {
   s_vibration = false;
   
   // Add custom fonts
-  s_clock_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_CLOCK_48));
-  s_date_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_DATE_22));
-  s_day_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_DAY_16));
+  s_lato_font_48 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_LATO_FONT_48));
+  s_lato_font_40 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_LATO_FONT_40));
+  s_lato_font_22 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_LATO_FONT_22));
+  s_lato_font_16 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_LATO_FONT_16));
   
   Layer *window_layer = window_get_root_layer(window);
   GRect bounds = layer_get_frame(window_layer);
@@ -262,14 +267,14 @@ static void main_window_load(Window *window) {
   s_time_layer = text_layer_create(GRect(0, 46, bounds.size.w, 52));
   text_layer_set_text_color(s_time_layer, settings.time_color);
   text_layer_set_background_color(s_time_layer, GColorClear);
-  text_layer_set_font(s_time_layer, s_clock_font);
+  text_layer_set_font(s_time_layer, s_lato_font_48);
   text_layer_set_text_alignment(s_time_layer, GTextAlignmentCenter);
   
   // Day Layer
   s_day_layer = text_layer_create(GRect(0, 106, bounds.size.w, 22));
   text_layer_set_text_color(s_day_layer, settings.day_color);
   text_layer_set_background_color(s_day_layer, GColorClear);
-  text_layer_set_font(s_day_layer, s_day_font);
+  text_layer_set_font(s_day_layer, s_lato_font_16);
   text_layer_set_text_alignment(s_day_layer, GTextAlignmentCenter);
   text_layer_set_text(s_day_layer, "Wednesday");
   
@@ -277,7 +282,7 @@ static void main_window_load(Window *window) {
   s_date_layer = text_layer_create(GRect(0, 130, bounds.size.w, 30));
   text_layer_set_text_color(s_date_layer, settings.date_color);
   text_layer_set_background_color(s_date_layer, GColorClear);
-  text_layer_set_font(s_date_layer, s_date_font);
+  text_layer_set_font(s_date_layer, s_lato_font_22);
   text_layer_set_text_alignment(s_date_layer, GTextAlignmentCenter);
   text_layer_set_text(s_date_layer, "02 Dec");
 
@@ -346,9 +351,10 @@ static void main_window_unload(Window *window) {
   text_layer_destroy(s_date_layer);
   text_layer_destroy(s_day_layer);
   layer_destroy(s_canvas_layer);
-  fonts_unload_custom_font(s_clock_font);
-  fonts_unload_custom_font(s_date_font);
-  fonts_unload_custom_font(s_day_font);
+  fonts_unload_custom_font(s_lato_font_48);
+  fonts_unload_custom_font(s_lato_font_40);
+  fonts_unload_custom_font(s_lato_font_22);
+  fonts_unload_custom_font(s_lato_font_16);
 }
 
 static void init() {

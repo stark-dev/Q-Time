@@ -18,11 +18,53 @@
             "date_color",
             "dial_color",
             "default_settings",
-            "h12_24"
+            "date_format",
+            "icon_color",
+            "date_format"
         ],
         "projectType": "native",
         "resources": {
             "media": [
+                {
+                    "file": "fonts/lato_font",
+                    "name": "LATO_FONT_16",
+                    "targetPlatforms": [
+                        "basalt"
+                    ],
+                    "type": "font"
+                },
+                {
+                    "file": "fonts/lato_font",
+                    "name": "LATO_FONT_18",
+                    "targetPlatforms": [
+                        "basalt"
+                    ],
+                    "type": "font"
+                },
+                {
+                    "file": "fonts/lato_font",
+                    "name": "LATO_FONT_22",
+                    "targetPlatforms": [
+                        "basalt"
+                    ],
+                    "type": "font"
+                },
+                {
+                    "file": "fonts/lato_font",
+                    "name": "LATO_FONT_40",
+                    "targetPlatforms": [
+                        "basalt"
+                    ],
+                    "type": "font"
+                },
+                {
+                    "file": "fonts/lato_font",
+                    "name": "LATO_FONT_48",
+                    "targetPlatforms": [
+                        "basalt"
+                    ],
+                    "type": "font"
+                },
                 {
                     "file": "images/menu_image",
                     "menuIcon": true,
@@ -31,30 +73,6 @@
                         "basalt"
                     ],
                     "type": "bitmap"
-                },
-                {
-                    "file": "fonts/font_clock",
-                    "name": "FONT_CLOCK_48",
-                    "targetPlatforms": [
-                        "basalt"
-                    ],
-                    "type": "font"
-                },
-                {
-                    "file": "fonts/font_date",
-                    "name": "FONT_DATE_22",
-                    "targetPlatforms": [
-                        "basalt"
-                    ],
-                    "type": "font"
-                },
-                {
-                    "file": "fonts/font_day",
-                    "name": "FONT_DAY_16",
-                    "targetPlatforms": [
-                        "basalt"
-                    ],
-                    "type": "font"
                 },
                 {
                     "file": "images/battery_charging",

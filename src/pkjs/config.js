@@ -1,11 +1,11 @@
 module.exports = [
   {
     "type": "heading",
-    "defaultValue": "App Configuration"
+    "defaultValue": "Q-Time Configuration"
   },
   {
     "type": "text",
-    "defaultValue": "Here is some introductory text."
+    "defaultValue": "Customize your watchface and save changes!"
   },
   {
     "type": "section",
@@ -23,13 +23,13 @@ module.exports = [
       {
         "type": "color",
         "messageKey": "text_color",
-        "defaultValue": "0xFFFFFF",
+        "defaultValue": "0xFBD83E",
         "label": "Text Color"
       },
       {
         "type": "color",
         "messageKey": "day_color",
-        "defaultValue": "0xFFFFFF",
+        "defaultValue": "0x00C4B9",
         "label": "Day Color"
       },
       {
@@ -58,12 +58,6 @@ module.exports = [
         "messageKey": "default_settings",
         "label": "Use default settings",
         "defaultValue": true
-      },
-      {
-        "type": "toggle",
-        "messageKey": "h12_24",
-        "label": "12/24 h format",
-        "defaultValue": false
       }
     ]
   },

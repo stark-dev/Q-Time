@@ -20,14 +20,18 @@
             "default_settings",
             "date_format",
             "icon_color",
-            "date_format"
+            "date_format",
+            "time_format",
+            "day_font_size",
+            "date_font_size",
+            "time_font_size"
         ],
         "projectType": "native",
         "resources": {
             "media": [
                 {
                     "file": "fonts/lato_font",
-                    "name": "LATO_FONT_16",
+                    "name": "LATO_FONT_24",
                     "targetPlatforms": [
                         "basalt"
                     ],
@@ -35,7 +39,31 @@
                 },
                 {
                     "file": "fonts/lato_font",
-                    "name": "LATO_FONT_18",
+                    "name": "LATO_FONT_20",
+                    "targetPlatforms": [
+                        "basalt"
+                    ],
+                    "type": "font"
+                },
+                {
+                    "file": "fonts/lato_font",
+                    "name": "LATO_FONT_44",
+                    "targetPlatforms": [
+                        "basalt"
+                    ],
+                    "type": "font"
+                },
+                {
+                    "file": "fonts/lato_font",
+                    "name": "LATO_FONT_46",
+                    "targetPlatforms": [
+                        "basalt"
+                    ],
+                    "type": "font"
+                },
+                {
+                    "file": "fonts/lato_font",
+                    "name": "LATO_FONT_48",
                     "targetPlatforms": [
                         "basalt"
                     ],
@@ -51,7 +79,7 @@
                 },
                 {
                     "file": "fonts/lato_font",
-                    "name": "LATO_FONT_40",
+                    "name": "LATO_FONT_18",
                     "targetPlatforms": [
                         "basalt"
                     ],
@@ -59,7 +87,7 @@
                 },
                 {
                     "file": "fonts/lato_font",
-                    "name": "LATO_FONT_48",
+                    "name": "LATO_FONT_16",
                     "targetPlatforms": [
                         "basalt"
                     ],

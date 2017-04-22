@@ -11,7 +11,11 @@ typedef struct ClaySettings {
   GColor date_color;
   GColor dial_color;
   bool default_settings;
+  int time_format;
   int date_format;
+  int time_font_size;
+  int day_font_size;
+  int date_font_size;
 } ClaySettings;
 
 // An instance of the struct
@@ -24,7 +28,6 @@ static Layer     *s_canvas_layer;
 static TextLayer *s_time_layer;
 static TextLayer *s_date_layer;
 static TextLayer *s_day_layer;
-static TextLayer *s_am_pm_layer;
 static GBitmap   *s_bt_conn, *s_bt_disc;
 static GBitmap   *s_quiet_on, *s_quiet_off;
 static GBitmap   *s_battery, *s_battery_low, *s_battery_very_low, *s_battery_ch;
@@ -37,13 +40,16 @@ static bool      s_bt_connected = false;
 static bool      s_vibration = false;
 // Static variables - text
 static char      s_time_text[] = "00:00";
-static char      s_am_pm_text[] = "AM";
 static char      s_date_text[] = "02 Dec";
 static char      s_day_text[] = "Wednesday";
 // Static variables - fonts
 static GFont     s_lato_font_48;
-static GFont     s_lato_font_40;
+static GFont     s_lato_font_46;
+static GFont     s_lato_font_44;
+static GFont     s_lato_font_24;
 static GFont     s_lato_font_22;
+static GFont     s_lato_font_20;
+static GFont     s_lato_font_18;
 static GFont     s_lato_font_16;
 
 /********************************** Handlers *********************************/
@@ -83,7 +89,11 @@ static void prv_default_settings() {
   settings.date_color = GColorWhite;
   settings.dial_color = GColorWhite;
   settings.default_settings = true;
+  settings.time_format = 24;
   settings.date_format = 0;
+  settings.time_font_size = 3;
+  settings.day_font_size = 1;
+  settings.date_font_size = 2;
 }
 
 // Read settings from persistent storage
@@ -133,9 +143,30 @@ static void prv_inbox_received_handler(DictionaryIterator *iter, void *context) 
   }
   
   // Read radio preferences
+  Tuple *time_format_t = dict_find(iter, MESSAGE_KEY_time_format);
+  if(time_format_t) {
+    settings.time_format = time_format_t->value->int32;
+  }
+  
   Tuple *date_format_t = dict_find(iter, MESSAGE_KEY_date_format);
   if(date_format_t) {
     settings.date_format = date_format_t->value->int32;
+  }
+  
+  // Read slider preferences
+  Tuple *time_font_size_t = dict_find(iter, MESSAGE_KEY_time_font_size);
+  if(time_font_size_t) {
+    settings.time_font_size = time_font_size_t->value->int32;
+  }
+  
+  Tuple *day_font_size_t = dict_find(iter, MESSAGE_KEY_day_font_size);
+  if(day_font_size_t) {
+    settings.day_font_size = day_font_size_t->value->int32;
+  }
+  
+  Tuple *date_font_size_t = dict_find(iter, MESSAGE_KEY_date_font_size);
+  if(date_font_size_t) {
+    settings.date_font_size = date_font_size_t->value->int32;
   }
   
   if(settings.default_settings){
@@ -143,6 +174,8 @@ static void prv_inbox_received_handler(DictionaryIterator *iter, void *context) 
     prv_default_settings();
   }  
   prv_save_settings();
+  
+  layer_mark_dirty(s_canvas_layer);
 }
 
 void prv_init(void) {
@@ -234,11 +267,11 @@ static void update_canvas(Layer *layer, GContext *ctx){
   else {
     graphics_context_set_fill_color(ctx, settings.dial_color);
   }
-  graphics_draw_circle(ctx, grect_center_point(&battery_level), 14);
+  graphics_draw_circle(ctx, grect_center_point(&battery_level), 13);
   graphics_fill_radial(ctx, battery_level, GOvalScaleModeFitCircle, 5, DEG_TO_TRIGANGLE(0), DEG_TO_TRIGANGLE((s_battery_level*360)/100));
   
   // Update text
-  strftime(s_time_text, sizeof(s_time_text), "%T", tick_time);
+  strftime(s_time_text, sizeof(s_time_text), (settings.time_format == 24) ? "%H:%M" : "%I:%M", tick_time);
   text_layer_set_text(s_time_layer, s_time_text);
   
   strftime(s_date_text, sizeof(s_date_text), "%d %b", tick_time);
@@ -256,8 +289,12 @@ static void main_window_load(Window *window) {
   
   // Add custom fonts
   s_lato_font_48 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_LATO_FONT_48));
-  s_lato_font_40 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_LATO_FONT_40));
+  s_lato_font_46 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_LATO_FONT_46));
+  s_lato_font_44 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_LATO_FONT_44));
+  s_lato_font_24 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_LATO_FONT_24));
   s_lato_font_22 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_LATO_FONT_22));
+  s_lato_font_20 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_LATO_FONT_20));
+  s_lato_font_18 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_LATO_FONT_18));
   s_lato_font_16 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_LATO_FONT_16));
   
   Layer *window_layer = window_get_root_layer(window);
@@ -267,14 +304,42 @@ static void main_window_load(Window *window) {
   s_time_layer = text_layer_create(GRect(0, 46, bounds.size.w, 52));
   text_layer_set_text_color(s_time_layer, settings.time_color);
   text_layer_set_background_color(s_time_layer, GColorClear);
-  text_layer_set_font(s_time_layer, s_lato_font_48);
+  switch (settings.day_font_size){
+    case 1:
+      text_layer_set_font(s_time_layer, s_lato_font_44);
+      break;
+    case 2:
+      text_layer_set_font(s_time_layer, s_lato_font_46);
+      break;
+    case 3:
+      text_layer_set_font(s_time_layer, s_lato_font_48);
+      break;
+    default:
+      text_layer_set_font(s_time_layer, s_lato_font_48);
+      break;
+  }
   text_layer_set_text_alignment(s_time_layer, GTextAlignmentCenter);
+  text_layer_set_text(s_time_layer, "12:34");
   
   // Day Layer
-  s_day_layer = text_layer_create(GRect(0, 106, bounds.size.w, 22));
+  s_day_layer = text_layer_create(GRect(0, 102, bounds.size.w, 22));
   text_layer_set_text_color(s_day_layer, settings.day_color);
   text_layer_set_background_color(s_day_layer, GColorClear);
-  text_layer_set_font(s_day_layer, s_lato_font_16);
+  switch (settings.day_font_size){
+    case 1:
+      text_layer_set_font(s_day_layer, s_lato_font_16);
+      break;
+    case 2:
+      text_layer_set_font(s_day_layer, s_lato_font_18);
+      break;
+    case 3:
+      text_layer_set_font(s_day_layer, s_lato_font_20);
+      break;
+    default:
+      text_layer_set_font(s_day_layer, s_lato_font_16);
+      break;
+  }
+  
   text_layer_set_text_alignment(s_day_layer, GTextAlignmentCenter);
   text_layer_set_text(s_day_layer, "Wednesday");
   
@@ -282,7 +347,20 @@ static void main_window_load(Window *window) {
   s_date_layer = text_layer_create(GRect(0, 130, bounds.size.w, 30));
   text_layer_set_text_color(s_date_layer, settings.date_color);
   text_layer_set_background_color(s_date_layer, GColorClear);
-  text_layer_set_font(s_date_layer, s_lato_font_22);
+  switch (settings.date_font_size){
+    case 1:
+      text_layer_set_font(s_date_layer, s_lato_font_20);
+      break;
+    case 2:
+      text_layer_set_font(s_date_layer, s_lato_font_22);
+      break;
+    case 3:
+      text_layer_set_font(s_date_layer, s_lato_font_24);
+      break;
+    default:
+      text_layer_set_font(s_date_layer, s_lato_font_22);
+      break;
+  }
   text_layer_set_text_alignment(s_date_layer, GTextAlignmentCenter);
   text_layer_set_text(s_date_layer, "02 Dec");
 
@@ -352,8 +430,12 @@ static void main_window_unload(Window *window) {
   text_layer_destroy(s_day_layer);
   layer_destroy(s_canvas_layer);
   fonts_unload_custom_font(s_lato_font_48);
-  fonts_unload_custom_font(s_lato_font_40);
+  fonts_unload_custom_font(s_lato_font_46);
+  fonts_unload_custom_font(s_lato_font_44);
+  fonts_unload_custom_font(s_lato_font_24);
   fonts_unload_custom_font(s_lato_font_22);
+  fonts_unload_custom_font(s_lato_font_20);
+  fonts_unload_custom_font(s_lato_font_18);
   fonts_unload_custom_font(s_lato_font_16);
 }
 

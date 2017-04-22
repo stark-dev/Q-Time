@@ -10,6 +10,7 @@ typedef struct ClaySettings {
   GColor day_color;
   GColor date_color;
   GColor dial_color;
+  int icon_color;
   bool default_settings;
   int time_format;
   int date_format;
@@ -88,6 +89,7 @@ static void prv_default_settings() {
   settings.day_color = GColorFromRGB(0, 196, 185);
   settings.date_color = GColorWhite;
   settings.dial_color = GColorWhite;
+  settings.icon_color = 0;
   settings.default_settings = true;
   settings.time_format = 24;
   settings.date_format = 0;
@@ -135,6 +137,11 @@ static void prv_inbox_received_handler(DictionaryIterator *iter, void *context) 
   if(dial_color_t) {
     settings.dial_color = GColorFromHEX(dial_color_t->value->int32);
   }
+  
+  Tuple *icon_color_t = dict_find(iter, MESSAGE_KEY_icon_color);
+  if(icon_color_t) {
+    settings.icon_color = icon_color_t->value->int32;
+  }
 
   // Read boolean preferences
   Tuple *default_settings_t = dict_find(iter, MESSAGE_KEY_default_settings);
@@ -175,7 +182,7 @@ static void prv_inbox_received_handler(DictionaryIterator *iter, void *context) 
   }  
   prv_save_settings();
   
-  layer_mark_dirty(s_canvas_layer);
+  //layer_mark_dirty(s_canvas_layer);
 }
 
 void prv_init(void) {
@@ -304,7 +311,7 @@ static void main_window_load(Window *window) {
   s_time_layer = text_layer_create(GRect(0, 46, bounds.size.w, 52));
   text_layer_set_text_color(s_time_layer, settings.time_color);
   text_layer_set_background_color(s_time_layer, GColorClear);
-  switch (settings.day_font_size){
+  switch (settings.time_font_size){
     case 1:
       text_layer_set_font(s_time_layer, s_lato_font_44);
       break;
@@ -322,7 +329,7 @@ static void main_window_load(Window *window) {
   text_layer_set_text(s_time_layer, "12:34");
   
   // Day Layer
-  s_day_layer = text_layer_create(GRect(0, 102, bounds.size.w, 22));
+  s_day_layer = text_layer_create(GRect(0, 104, bounds.size.w, 22));
   text_layer_set_text_color(s_day_layer, settings.day_color);
   text_layer_set_background_color(s_day_layer, GColorClear);
   switch (settings.day_font_size){

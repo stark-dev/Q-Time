@@ -24,7 +24,8 @@
             "time_format",
             "day_font_size",
             "date_font_size",
-            "time_font_size"
+            "time_font_size",
+            "icon_color"
         ],
         "projectType": "native",
         "resources": {

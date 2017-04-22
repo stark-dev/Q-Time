@@ -62,7 +62,31 @@ module.exports = [
         "messageKey": "dial_color",
         "defaultValue": "0xFFFFFF",
         "label": "Dial Color"
-      }
+      },
+      {
+        "type": "radiogroup",
+        "messageKey": "icon_color",
+        "label": "Icon color",
+        "defaultValue": "0",
+        "options": [
+          { 
+            "label": "Standard", 
+            "value": "0" 
+          },
+          { 
+            "label": "Reverse", 
+            "value": "1" 
+          },
+          { 
+            "label": "Mono", 
+            "value": "2" 
+          },
+          { 
+            "label": "High contrast", 
+            "value": "3" 
+          }
+        ]
+      },
     ]
   },
   {

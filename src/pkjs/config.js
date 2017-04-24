@@ -12,81 +12,28 @@ module.exports = [
     "items": [
       {
         "type": "heading",
-        "defaultValue": "Custom/default settings"
-      },
-      {
-        "type": "text",
-        "defaultValue": "Select custom settings to make changes effective"
-      },
-      {
-        "type": "toggle",
-        "messageKey": "default_settings",
-        "label": "Use default settings",
-        "defaultValue": true
-      },
-    ]
-  },
-  {
-    "type": "section",
-    "items": [
-      {
-        "type": "heading",
-        "defaultValue": "Colors"
-      },
-      {
-        "type": "color",
-        "messageKey": "background_color",
-        "defaultValue": "0x000000",
-        "label": "Background Color"
-      },
-      {
-        "type": "color",
-        "messageKey": "text_color",
-        "defaultValue": "0xFBD83E",
-        "label": "Text Color"
-      },
-      {
-        "type": "color",
-        "messageKey": "day_color",
-        "defaultValue": "0x00C4B9",
-        "label": "Day Color"
-      },
-      {
-        "type": "color",
-        "messageKey": "date_color",
-        "defaultValue": "0xFFFFFF",
-        "label": "Date Color"
-      },
-      {
-        "type": "color",
-        "messageKey": "dial_color",
-        "defaultValue": "0xFFFFFF",
-        "label": "Dial Color"
+        "defaultValue": "Color settings"
       },
       {
         "type": "radiogroup",
-        "messageKey": "icon_color",
-        "label": "Icon color",
+        "messageKey": "colors",
+        "label": "Choose your color set",
         "defaultValue": "0",
         "options": [
           { 
-            "label": "Standard", 
+            "label": "Default", 
             "value": "0" 
           },
           { 
-            "label": "Reverse", 
+            "label": "Dark", 
             "value": "1" 
           },
           { 
-            "label": "Mono", 
+            "label": "Light", 
             "value": "2" 
-          },
-          { 
-            "label": "High contrast", 
-            "value": "3" 
           }
         ]
-      },
+      }
     ]
   },
   {
@@ -94,7 +41,7 @@ module.exports = [
     "items": [
       {
         "type": "heading",
-        "defaultValue": "More Settings"
+        "defaultValue": "Time Settings"
       },
       {
         "type": "radiogroup",
@@ -111,36 +58,75 @@ module.exports = [
             "value": "12" 
           }
         ]
+      }
+    ]
+  },
+  {
+    "type": "section",
+    "items": [
+      {
+        "type": "heading",
+        "defaultValue": "Font Settings"
       },
       {
-        "type": "slider",
-        "messageKey": "time_font_size",
-        "defaultValue": 3,
+        "type": "radiogroup",
+        "messageKey": "time_font",
         "label": "Time font size",
-        "description": "Select font size for time",
-        "min": 1,
-        "max": 3,
-        "step": 1
+        "defaultValue": "48",
+        "options": [
+          { 
+            "label": "Small", 
+            "value": "44" 
+          },
+          { 
+            "label": "Medium", 
+            "value": "46" 
+          },
+          { 
+            "label": "Large", 
+            "value": "48" 
+          }
+        ]
       },
       {
-        "type": "slider",
-        "messageKey": "day_font_size",
-        "defaultValue": 1,
+        "type": "radiogroup",
+        "messageKey": "day_font",
         "label": "Day font size",
-        "description": "Select font size for day",
-        "min": 1,
-        "max": 3,
-        "step": 1
+        "defaultValue": "16",
+        "options": [
+          { 
+            "label": "Small", 
+            "value": "16" 
+          },
+          { 
+            "label": "Medium", 
+            "value": "18" 
+          },
+          { 
+            "label": "Large", 
+            "value": "20" 
+          }
+        ]
       },
       {
-        "type": "slider",
-        "messageKey": "date_font_size",
-        "defaultValue": 2,
+        "type": "radiogroup",
+        "messageKey": "date_font",
         "label": "Date font size",
-        "description": "Select font size for date",
-        "min": 1,
-        "max": 3,
-        "step": 1
+        "defaultValue": "22",
+        "options": [
+          { 
+            "label": "Small", 
+            "value": "20" 
+          },
+          { 
+            "label": "Medium", 
+            "value": "22" 
+          },
+          { 
+            "label": "Large", 
+            "value": "24" 
+          }
+        ]
       }
     ]
   },

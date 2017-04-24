@@ -12,24 +12,143 @@
         "displayName": "Q-Time",
         "enableMultiJS": true,
         "messageKeys": [
-            "background_color",
-            "text_color",
-            "day_color",
-            "date_color",
-            "dial_color",
-            "default_settings",
-            "date_format",
-            "icon_color",
-            "date_format",
+            "colors",
             "time_format",
-            "day_font_size",
-            "date_font_size",
-            "time_font_size",
-            "icon_color"
+            "day_font",
+            "date_font",
+            "time_font"
         ],
         "projectType": "native",
         "resources": {
             "media": [
+                {
+                    "file": "images/battery_very_low_rev",
+                    "name": "IMAGE_BATTERY_VERY_LOW_REV",
+                    "targetPlatforms": [
+                        "basalt"
+                    ],
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/battery_low_rev",
+                    "name": "IMAGE_BATTERY_LOW_REV",
+                    "targetPlatforms": [
+                        "basalt"
+                    ],
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/battery_charging_rev",
+                    "name": "IMAGE_BATTERY_CH_REV",
+                    "targetPlatforms": [
+                        "basalt"
+                    ],
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/quiet_on_rev",
+                    "name": "IMAGE_QUIET_REV",
+                    "targetPlatforms": [
+                        "basalt"
+                    ],
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/quiet_off_rev",
+                    "name": "IMAGE_VIBE_REV",
+                    "targetPlatforms": [
+                        "basalt"
+                    ],
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/disconnected_rev",
+                    "name": "IMAGE_DISCONNECTED_REV",
+                    "targetPlatforms": [
+                        "basalt"
+                    ],
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/connected_rev",
+                    "name": "IMAGE_CONNECTED_REV",
+                    "targetPlatforms": [
+                        "basalt"
+                    ],
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/quiet_on_std",
+                    "name": "IMAGE_QUIET_STD",
+                    "targetPlatforms": [
+                        "basalt"
+                    ],
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/quiet_off_std",
+                    "name": "IMAGE_VIBE_STD",
+                    "targetPlatforms": [
+                        "basalt"
+                    ],
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/disconnected_std",
+                    "name": "IMAGE_DISCONNECTED_STD",
+                    "targetPlatforms": [
+                        "basalt"
+                    ],
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/connected_std",
+                    "name": "IMAGE_CONNECTED_STD",
+                    "targetPlatforms": [
+                        "basalt"
+                    ],
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/battery_very_low_std",
+                    "name": "IMAGE_BATTERY_VERY_LOW_STD",
+                    "targetPlatforms": [
+                        "basalt"
+                    ],
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/battery_low_std",
+                    "name": "IMAGE_BATTERY_LOW_STD",
+                    "targetPlatforms": [
+                        "basalt"
+                    ],
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/battery_charging_std",
+                    "name": "IMAGE_BATTERY_CH_STD",
+                    "targetPlatforms": [
+                        "basalt"
+                    ],
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/battery_rev",
+                    "name": "IMAGE_BATTERY_REV",
+                    "targetPlatforms": [
+                        "basalt"
+                    ],
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/battery_std",
+                    "name": "IMAGE_BATTERY_STD",
+                    "targetPlatforms": [
+                        "basalt"
+                    ],
+                    "type": "bitmap"
+                },
                 {
                     "file": "fonts/lato_font",
                     "name": "LATO_FONT_24",
@@ -98,70 +217,6 @@
                     "file": "images/menu_image",
                     "menuIcon": true,
                     "name": "IMAGE_MENU",
-                    "targetPlatforms": [
-                        "basalt"
-                    ],
-                    "type": "bitmap"
-                },
-                {
-                    "file": "images/battery_charging",
-                    "name": "IMAGE_BATTERY_CH",
-                    "targetPlatforms": [
-                        "basalt"
-                    ],
-                    "type": "bitmap"
-                },
-                {
-                    "file": "images/battery_low",
-                    "name": "IMAGE_BATTERY_LOW",
-                    "targetPlatforms": [
-                        "basalt"
-                    ],
-                    "type": "bitmap"
-                },
-                {
-                    "file": "images/battery_very_low",
-                    "name": "IMAGE_BATTERY_VERY_LOW",
-                    "targetPlatforms": [
-                        "basalt"
-                    ],
-                    "type": "bitmap"
-                },
-                {
-                    "file": "images/battery",
-                    "name": "IMAGE_BATTERY",
-                    "targetPlatforms": [
-                        "basalt"
-                    ],
-                    "type": "bitmap"
-                },
-                {
-                    "file": "images/quiet_off",
-                    "name": "IMAGE_VIBE",
-                    "targetPlatforms": [
-                        "basalt"
-                    ],
-                    "type": "bitmap"
-                },
-                {
-                    "file": "images/quiet_on",
-                    "name": "IMAGE_QUIET",
-                    "targetPlatforms": [
-                        "basalt"
-                    ],
-                    "type": "bitmap"
-                },
-                {
-                    "file": "images/disconnected",
-                    "name": "IMAGE_DISCONNECTED",
-                    "targetPlatforms": [
-                        "basalt"
-                    ],
-                    "type": "bitmap"
-                },
-                {
-                    "file": "images/connected",
-                    "name": "IMAGE_CONNECTED",
                     "targetPlatforms": [
                         "basalt"
                     ],

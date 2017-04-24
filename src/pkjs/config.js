@@ -5,7 +5,7 @@ module.exports = [
   },
   {
     "type": "text",
-    "defaultValue": "Save settings and Reload your watchface in order to apply changes"
+    "defaultValue": "Save settings and reload your watchface in order to apply changes"
   },
   {
     "type": "section",
@@ -17,7 +17,7 @@ module.exports = [
       {
         "type": "radiogroup",
         "messageKey": "colors",
-        "label": "Choose your color set",
+        "label": "Choose your color set:",
         "defaultValue": "0",
         "options": [
           { 
@@ -46,7 +46,7 @@ module.exports = [
       {
         "type": "radiogroup",
         "messageKey": "time_format",
-        "label": "Time format",
+        "label": "Time format:",
         "defaultValue": "0",
         "options": [
           { 
@@ -71,7 +71,7 @@ module.exports = [
       {
         "type": "radiogroup",
         "messageKey": "time_font",
-        "label": "Time font size",
+        "label": "Time font size:",
         "defaultValue": "2",
         "options": [
           { 
@@ -91,7 +91,7 @@ module.exports = [
       {
         "type": "radiogroup",
         "messageKey": "day_font",
-        "label": "Day font size",
+        "label": "Day font size:",
         "defaultValue": "1",
         "options": [
           { 
@@ -111,7 +111,7 @@ module.exports = [
       {
         "type": "radiogroup",
         "messageKey": "date_font",
-        "label": "Date font size",
+        "label": "Date font size:",
         "defaultValue": "1",
         "options": [
           { 

@@ -128,7 +128,7 @@ static void load_colors() {
       s_color_set.day_color = GColorBlack;
       s_color_set.date_color = GColorBlack;
       s_color_set.dial_color = GColorBlack;
-      s_color_set.dial_off_color = GColorWhite;
+      s_color_set.dial_off_color = GColorLightGray;
       s_color_set.battery_low_color = GColorOrange;
       s_color_set.battery_very_low_color = GColorDarkCandyAppleRed;
     break;

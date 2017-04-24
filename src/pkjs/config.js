@@ -5,7 +5,7 @@ module.exports = [
   },
   {
     "type": "text",
-    "defaultValue": "Customize your watchface and save changes!"
+    "defaultValue": "Save settings and Reload your watchface in order to apply changes"
   },
   {
     "type": "section",
@@ -47,15 +47,15 @@ module.exports = [
         "type": "radiogroup",
         "messageKey": "time_format",
         "label": "Time format",
-        "defaultValue": "24",
+        "defaultValue": "0",
         "options": [
           { 
             "label": "24h", 
-            "value": "24" 
+            "value": "0" 
           },
           { 
             "label": "12h", 
-            "value": "12" 
+            "value": "1" 
           }
         ]
       }
@@ -72,19 +72,19 @@ module.exports = [
         "type": "radiogroup",
         "messageKey": "time_font",
         "label": "Time font size",
-        "defaultValue": "48",
+        "defaultValue": "2",
         "options": [
           { 
             "label": "Small", 
-            "value": "44" 
+            "value": "0" 
           },
           { 
             "label": "Medium", 
-            "value": "46" 
+            "value": "1" 
           },
           { 
             "label": "Large", 
-            "value": "48" 
+            "value": "2" 
           }
         ]
       },
@@ -92,19 +92,19 @@ module.exports = [
         "type": "radiogroup",
         "messageKey": "day_font",
         "label": "Day font size",
-        "defaultValue": "16",
+        "defaultValue": "1",
         "options": [
           { 
             "label": "Small", 
-            "value": "16" 
+            "value": "0" 
           },
           { 
             "label": "Medium", 
-            "value": "18" 
+            "value": "1" 
           },
           { 
             "label": "Large", 
-            "value": "20" 
+            "value": "2" 
           }
         ]
       },
@@ -112,19 +112,19 @@ module.exports = [
         "type": "radiogroup",
         "messageKey": "date_font",
         "label": "Date font size",
-        "defaultValue": "22",
+        "defaultValue": "1",
         "options": [
           { 
             "label": "Small", 
-            "value": "20" 
+            "value": "0" 
           },
           { 
             "label": "Medium", 
-            "value": "22" 
+            "value": "1" 
           },
           { 
             "label": "Large", 
-            "value": "24" 
+            "value": "2" 
           }
         ]
       }

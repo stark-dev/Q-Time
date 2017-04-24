@@ -5,11 +5,11 @@
 
 // Define settings struct
 typedef struct ClaySettings {
-  int colors;
-  int time_format;
-  int time_font_size;
-  int day_font_size;
-  int date_font_size;
+  char colors;
+  char time_format;
+  char time_font_size;
+  char day_font_size;
+  char date_font_size;
 } ClaySettings;
 
 // An instance of the struct
@@ -39,7 +39,6 @@ typedef struct ImageSet {
 
 // An instance of the struct
 static ImageSet s_image_set_std;
-static ImageSet s_image_set_rev;
 
 // Window
 static Window    *s_main_window;
@@ -129,9 +128,9 @@ static void load_colors() {
       s_color_set.day_color = GColorBlack;
       s_color_set.date_color = GColorBlack;
       s_color_set.dial_color = GColorBlack;
-      s_color_set.dial_off_color = GColorDarkGray;
-      s_color_set.battery_low_color = GColorYellow;
-      s_color_set.battery_very_low_color = GColorRed;
+      s_color_set.dial_off_color = GColorWhite;
+      s_color_set.battery_low_color = GColorOrange;
+      s_color_set.battery_very_low_color = GColorDarkCandyAppleRed;
     break;
     default:
       // Standard set
@@ -151,10 +150,10 @@ static void load_colors() {
 // Initialize the default settings
 static void prv_default_settings() {
   settings.colors = 0;
-  settings.time_format = 24;
-  settings.time_font_size = 48;
-  settings.day_font_size = 16;
-  settings.date_font_size = 22;
+  settings.time_format = 0;
+  settings.time_font_size = 2;
+  settings.day_font_size = 0;
+  settings.date_font_size = 1;
 }
 
 // Read settings from persistent storage
@@ -174,29 +173,29 @@ static void prv_inbox_received_handler(DictionaryIterator *iter, void *context) 
   // Read color preferences
   Tuple *colors_t = dict_find(iter, MESSAGE_KEY_colors);
   if(colors_t) {
-    settings.colors = colors_t->value->int32;
+    settings.colors = colors_t->value->uint8 - '0';
   }
   
   // Read time format preferences
   Tuple *time_format_t = dict_find(iter, MESSAGE_KEY_time_format);
   if(time_format_t) {
-    settings.time_format = time_format_t->value->int32;
+    settings.time_format = time_format_t->value->uint8 - '0';
   }
   
   // Read fonts preferences
   Tuple *time_font_size_t = dict_find(iter, MESSAGE_KEY_time_font);
   if(time_font_size_t) {
-    settings.time_font_size = time_font_size_t->value->int32;
+    settings.time_font_size = time_font_size_t->value->uint8 - '0';
   }
   
   Tuple *day_font_size_t = dict_find(iter, MESSAGE_KEY_day_font);
   if(day_font_size_t) {
-    settings.day_font_size = day_font_size_t->value->int32;
+    settings.day_font_size = day_font_size_t->value->uint8 - '0';
   }
   
   Tuple *date_font_size_t = dict_find(iter, MESSAGE_KEY_date_font);
   if(date_font_size_t) {
-    settings.date_font_size = date_font_size_t->value->int32;
+    settings.date_font_size = date_font_size_t->value->uint8 - '0';
   }
   prv_save_settings();
 }
@@ -293,7 +292,7 @@ static void update_canvas(Layer *layer, GContext *ctx){
   graphics_fill_radial(ctx, battery_level, GOvalScaleModeFitCircle, 5, DEG_TO_TRIGANGLE(0), DEG_TO_TRIGANGLE((s_battery_level*360)/100));
     
   // Update text
-  strftime(s_time_text, sizeof(s_time_text), (settings.time_format == 24) ? "%H:%M" : "%I:%M", tick_time);
+  strftime(s_time_text, sizeof(s_time_text), (settings.time_format == 0) ? "%H:%M" : "%I:%M", tick_time);
   text_layer_set_text(s_time_layer, s_time_text);
 
   strftime(s_date_text, sizeof(s_date_text), "%d %b", tick_time);
@@ -319,31 +318,40 @@ static void main_window_load(Window *window) {
   s_lato_font_16 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_LATO_FONT_16));
   
   // Load images
-  // Standard image set
-  // Bluetooth bitmaps
-  s_image_set_std.bt_conn = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_CONNECTED_STD);
-  s_image_set_std.bt_disc = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_DISCONNECTED_STD);
-  // Quiet Time bitmaps
-  s_image_set_std.quiet_on = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_QUIET_STD);
-  s_image_set_std.quiet_off = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_VIBE_STD);
-  // Battery bitmaps
-  s_image_set_std.battery = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BATTERY_STD);
-  s_image_set_std.battery_low = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BATTERY_LOW_STD);
-  s_image_set_std.battery_very_low = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BATTERY_VERY_LOW_STD);
-  s_image_set_std.battery_ch = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BATTERY_CH_STD);
-
-  // Reverse image set
-  // Bluetooth bitmaps
-  s_image_set_rev.bt_conn = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_CONNECTED_REV);
-  s_image_set_rev.bt_disc = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_DISCONNECTED_REV);
-  // Quiet Time bitmaps
-  s_image_set_rev.quiet_on = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_QUIET_REV);
-  s_image_set_rev.quiet_off = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_VIBE_REV);
-  // Battery bitmaps
-  s_image_set_rev.battery = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BATTERY_REV);
-  s_image_set_rev.battery_low = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BATTERY_LOW_REV);
-  s_image_set_rev.battery_very_low = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BATTERY_VERY_LOW_REV);
-  s_image_set_rev.battery_ch = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BATTERY_CH_REV);
+  
+  switch(settings.colors){
+    case 0:
+    case 1:
+      // Standard image set
+      // Bluetooth bitmaps
+      s_image_set_std.bt_conn = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_CONNECTED_STD);
+      s_image_set_std.bt_disc = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_DISCONNECTED_STD);
+      // Quiet Time bitmaps
+      s_image_set_std.quiet_on = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_QUIET_STD);
+      s_image_set_std.quiet_off = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_VIBE_STD);
+      // Battery bitmaps
+      s_image_set_std.battery = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BATTERY_STD);
+      s_image_set_std.battery_low = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BATTERY_LOW_STD);
+      s_image_set_std.battery_very_low = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BATTERY_VERY_LOW_STD);
+      s_image_set_std.battery_ch = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BATTERY_CH_STD);
+    break;
+    case 2:
+      // Reverse image set
+      // Bluetooth bitmaps
+      s_image_set_std.bt_conn = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_CONNECTED_REV);
+      s_image_set_std.bt_disc = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_DISCONNECTED_REV);
+      // Quiet Time bitmaps
+      s_image_set_std.quiet_on = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_QUIET_REV);
+      s_image_set_std.quiet_off = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_VIBE_REV);
+      // Battery bitmaps
+      s_image_set_std.battery = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BATTERY_REV);
+      s_image_set_std.battery_low = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BATTERY_LOW_REV);
+      s_image_set_std.battery_very_low = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BATTERY_VERY_LOW_REV);
+      s_image_set_std.battery_ch = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BATTERY_CH_REV);
+    break;
+    default:
+    break;
+  }
   
   Layer *window_layer = window_get_root_layer(window);
   GRect bounds = layer_get_frame(window_layer);
@@ -353,13 +361,13 @@ static void main_window_load(Window *window) {
   text_layer_set_text_color(s_time_layer, s_color_set.time_color);
   text_layer_set_background_color(s_time_layer, GColorClear);
   switch (settings.time_font_size){
-    case 44:
+    case 0:
       text_layer_set_font(s_time_layer, s_lato_font_44);
       break;
-    case 46:
+    case 1:
       text_layer_set_font(s_time_layer, s_lato_font_46);
       break;
-    case 48:
+    case 2:
       text_layer_set_font(s_time_layer, s_lato_font_48);
       break;
     default:
@@ -374,13 +382,13 @@ static void main_window_load(Window *window) {
   text_layer_set_text_color(s_day_layer, s_color_set.day_color);
   text_layer_set_background_color(s_day_layer, GColorClear);
   switch (settings.day_font_size){
-    case 16:
+    case 0:
       text_layer_set_font(s_day_layer, s_lato_font_16);
       break;
-    case 18:
+    case 1:
       text_layer_set_font(s_day_layer, s_lato_font_18);
       break;
-    case 20:
+    case 2:
       text_layer_set_font(s_day_layer, s_lato_font_20);
       break;
     default:
@@ -396,13 +404,13 @@ static void main_window_load(Window *window) {
   text_layer_set_text_color(s_date_layer, s_color_set.date_color);
   text_layer_set_background_color(s_date_layer, GColorClear);
   switch (settings.date_font_size){
-    case 20:
+    case 0:
       text_layer_set_font(s_date_layer, s_lato_font_20);
       break;
-    case 22:
+    case 1:
       text_layer_set_font(s_date_layer, s_lato_font_22);
       break;
-    case 24:
+    case 2:
       text_layer_set_font(s_date_layer, s_lato_font_24);
       break;
     default:
@@ -459,14 +467,6 @@ static void main_window_unload(Window *window) {
   gbitmap_destroy(s_image_set_std.battery_low);
   gbitmap_destroy(s_image_set_std.battery_very_low);
   gbitmap_destroy(s_image_set_std.battery_ch);
-  gbitmap_destroy(s_image_set_rev.bt_conn);
-  gbitmap_destroy(s_image_set_rev.bt_disc);
-  gbitmap_destroy(s_image_set_rev.quiet_on);
-  gbitmap_destroy(s_image_set_rev.quiet_off);
-  gbitmap_destroy(s_image_set_rev.battery);
-  gbitmap_destroy(s_image_set_rev.battery_low);
-  gbitmap_destroy(s_image_set_rev.battery_very_low);
-  gbitmap_destroy(s_image_set_rev.battery_ch);
   text_layer_destroy(s_time_layer);
   text_layer_destroy(s_date_layer);
   text_layer_destroy(s_day_layer);

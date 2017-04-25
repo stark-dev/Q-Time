@@ -118,8 +118,8 @@ static void load_colors() {
       s_color_set.date_color = GColorWhite;
       s_color_set.dial_color = GColorWhite;
       s_color_set.dial_off_color = GColorDarkGray;
-      s_color_set.battery_low_color = GColorYellow;
-      s_color_set.battery_very_low_color = GColorRed;
+      s_color_set.battery_low_color = GColorOrange;
+      s_color_set.battery_very_low_color = GColorDarkCandyAppleRed;
     break;
     case 2:
       // Light set
@@ -292,6 +292,7 @@ static void update_canvas(Layer *layer, GContext *ctx){
   graphics_fill_radial(ctx, battery_level, GOvalScaleModeFitCircle, 5, DEG_TO_TRIGANGLE(0), DEG_TO_TRIGANGLE((s_battery_level*360)/100));
     
   // Update text
+  //strftime(s_time_text, sizeof(s_time_text), clock_is_24h_style() ? "%H:%M" : "%I:%M", tick_time);
   strftime(s_time_text, sizeof(s_time_text), (settings.time_format == 0) ? "%H:%M" : "%I:%M", tick_time);
   text_layer_set_text(s_time_layer, s_time_text);
 
@@ -321,8 +322,6 @@ static void main_window_load(Window *window) {
   
   switch(settings.colors){
     case 0:
-    case 1:
-      // Standard image set
       // Bluetooth bitmaps
       s_image_set_std.bt_conn = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_CONNECTED_STD);
       s_image_set_std.bt_disc = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_DISCONNECTED_STD);
@@ -335,8 +334,20 @@ static void main_window_load(Window *window) {
       s_image_set_std.battery_very_low = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BATTERY_VERY_LOW_STD);
       s_image_set_std.battery_ch = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BATTERY_CH_STD);
     break;
+    case 1:
+      // Bluetooth bitmaps
+      s_image_set_std.bt_conn = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_CONNECTED_STD);
+      s_image_set_std.bt_disc = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_DISCONNECTED_STD);
+      // Quiet Time bitmaps
+      s_image_set_std.quiet_on = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_QUIET_STD);
+      s_image_set_std.quiet_off = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_VIBE_STD);
+      // Battery bitmaps
+      s_image_set_std.battery = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BATTERY_STD);
+      s_image_set_std.battery_low = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BATTERY_LOW_REV);
+      s_image_set_std.battery_very_low = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BATTERY_VERY_LOW_REV);
+      s_image_set_std.battery_ch = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BATTERY_CH_REV);
+    break;
     case 2:
-      // Reverse image set
       // Bluetooth bitmaps
       s_image_set_std.bt_conn = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_CONNECTED_REV);
       s_image_set_std.bt_disc = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_DISCONNECTED_REV);

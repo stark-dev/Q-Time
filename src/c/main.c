@@ -5,11 +5,16 @@
 
 // Define settings struct
 typedef struct ClaySettings {
-  char colors;
-  char time_format;
-  char time_font_size;
-  char day_font_size;
-  char date_font_size;
+  bool   default_settings;
+  char   background_color;
+  GColor time_color;
+  GColor day_color;
+  GColor date_color;
+  GColor dial_color;
+  char   time_format;
+  char   time_font_size;
+  char   day_font_size;
+  char   date_font_size;
 } ClaySettings;
 
 // An instance of the struct
@@ -98,9 +103,8 @@ static void bluetooth_callback(bool connected) {
 
 // Set colors
 static void load_colors() {
-  switch(settings.colors){
-    case 0:
-      // Standard set
+  if(settings.default_settings){
+    // Standard set
       s_color_set.background_color = GColorBlack;
       s_color_set.time_color = GColorFromRGB(251, 216, 62);
       s_color_set.day_color = GColorFromRGB(0, 196, 185);
@@ -109,47 +113,55 @@ static void load_colors() {
       s_color_set.dial_off_color = GColorDarkGray;
       s_color_set.battery_low_color = GColorFromRGB(251, 216, 62);
       s_color_set.battery_very_low_color = GColorRed;
-    break;
-    case 1:
-      // Dark set
-      s_color_set.background_color = GColorBlack;
-      s_color_set.time_color = GColorWhite;
-      s_color_set.day_color = GColorWhite;
-      s_color_set.date_color = GColorWhite;
-      s_color_set.dial_color = GColorWhite;
-      s_color_set.dial_off_color = GColorDarkGray;
-      s_color_set.battery_low_color = GColorOrange;
-      s_color_set.battery_very_low_color = GColorDarkCandyAppleRed;
-    break;
-    case 2:
-      // Light set
-      s_color_set.background_color = GColorWhite;
-      s_color_set.time_color = GColorBlack;
-      s_color_set.day_color = GColorBlack;
-      s_color_set.date_color = GColorBlack;
-      s_color_set.dial_color = GColorBlack;
-      s_color_set.dial_off_color = GColorLightGray;
-      s_color_set.battery_low_color = GColorOrange;
-      s_color_set.battery_very_low_color = GColorDarkCandyAppleRed;
-    break;
-    default:
-      // Standard set
-      s_color_set.background_color = GColorBlack;
-      s_color_set.time_color = GColorFromRGB(251, 216, 62);
-      s_color_set.day_color = GColorFromRGB(0, 196, 185);
-      s_color_set.date_color = GColorWhite;
-      s_color_set.dial_color = GColorWhite;
-      s_color_set.dial_off_color = GColorDarkGray;
-      s_color_set.battery_low_color = GColorFromRGB(251, 216, 62);
-      s_color_set.battery_very_low_color = GColorRed;
-    break;
+  }
+  else {
+    switch(settings.background_color){
+      case 0:
+        // Dark set
+        s_color_set.background_color = GColorBlack;
+        s_color_set.time_color = settings.time_color;
+        s_color_set.day_color = settings.day_color;
+        s_color_set.date_color = settings.date_color;
+        s_color_set.dial_color = settings.dial_color;
+        s_color_set.dial_off_color = GColorDarkGray;
+        s_color_set.battery_low_color = GColorOrange;
+        s_color_set.battery_very_low_color = GColorDarkCandyAppleRed;
+      break;
+      case 1:
+        // Light set
+        s_color_set.background_color = GColorWhite;
+        s_color_set.time_color = settings.time_color;
+        s_color_set.day_color = settings.day_color;
+        s_color_set.date_color = settings.date_color;
+        s_color_set.dial_color = settings.dial_color;
+        s_color_set.dial_off_color = GColorLightGray;
+        s_color_set.battery_low_color = GColorOrange;
+        s_color_set.battery_very_low_color = GColorDarkCandyAppleRed;
+      break;
+      default:
+        // Standard set
+        s_color_set.background_color = GColorBlack;
+        s_color_set.time_color = GColorFromRGB(251, 216, 62);
+        s_color_set.day_color = GColorFromRGB(0, 196, 185);
+        s_color_set.date_color = GColorWhite;
+        s_color_set.dial_color = GColorWhite;
+        s_color_set.dial_off_color = GColorDarkGray;
+        s_color_set.battery_low_color = GColorFromRGB(251, 216, 62);
+        s_color_set.battery_very_low_color = GColorRed;
+      break;
+    }
   }
 }
 
 // Clay interface
 // Initialize the default settings
 static void prv_default_settings() {
-  settings.colors = 0;
+  settings.default_settings = true;
+  settings.background_color = 0;
+  settings.time_color = GColorWhite;
+  settings.day_color = GColorWhite;
+  settings.date_color = GColorWhite;
+  settings.dial_color = GColorWhite;
   settings.time_format = 0;
   settings.time_font_size = 2;
   settings.day_font_size = 0;
@@ -169,11 +181,37 @@ static void prv_save_settings() {
   persist_write_data(SETTINGS_KEY, &settings, sizeof(settings));
 }
 
-static void prv_inbox_received_handler(DictionaryIterator *iter, void *context) {  
+static void prv_inbox_received_handler(DictionaryIterator *iter, void *context) {
+  // Read default settings preferences
+  Tuple *default_settings_t = dict_find(iter, MESSAGE_KEY_default_settings);
+  if(default_settings_t) {
+    settings.default_settings = default_settings_t->value->int32 == 1;
+  }
+
   // Read color preferences
-  Tuple *colors_t = dict_find(iter, MESSAGE_KEY_colors);
-  if(colors_t) {
-    settings.colors = colors_t->value->uint8 - '0';
+  Tuple *background_color_t = dict_find(iter, MESSAGE_KEY_background_color);
+  if(background_color_t) {
+    settings.background_color = background_color_t->value->uint8 - '0';
+  }
+  
+  Tuple *time_color_t = dict_find(iter, MESSAGE_KEY_time_color);
+  if(time_color_t) {
+    settings.time_color = GColorFromHEX(time_color_t->value->int32);
+  }
+  
+  Tuple *day_color_t = dict_find(iter, MESSAGE_KEY_day_color);
+  if(day_color_t) {
+    settings.day_color = GColorFromHEX(day_color_t->value->int32);
+  }
+  
+  Tuple *date_color_t = dict_find(iter, MESSAGE_KEY_date_color);
+  if(date_color_t) {
+    settings.date_color = GColorFromHEX(date_color_t->value->int32);
+  }
+  
+  Tuple *dial_color_t = dict_find(iter, MESSAGE_KEY_dial_color);
+  if(dial_color_t) {
+    settings.dial_color = GColorFromHEX(dial_color_t->value->int32);
   }
   
   // Read time format preferences
@@ -319,9 +357,7 @@ static void main_window_load(Window *window) {
   s_lato_font_16 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_LATO_FONT_16));
   
   // Load images
-  
-  switch(settings.colors){
-    case 0:
+  if (settings.default_settings){
       // Bluetooth bitmaps
       s_image_set_std.bt_conn = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_CONNECTED_STD);
       s_image_set_std.bt_disc = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_DISCONNECTED_STD);
@@ -333,35 +369,49 @@ static void main_window_load(Window *window) {
       s_image_set_std.battery_low = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BATTERY_LOW_STD);
       s_image_set_std.battery_very_low = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BATTERY_VERY_LOW_STD);
       s_image_set_std.battery_ch = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BATTERY_CH_STD);
-    break;
-    case 1:
-      // Bluetooth bitmaps
-      s_image_set_std.bt_conn = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_CONNECTED_STD);
-      s_image_set_std.bt_disc = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_DISCONNECTED_STD);
-      // Quiet Time bitmaps
-      s_image_set_std.quiet_on = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_QUIET_STD);
-      s_image_set_std.quiet_off = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_VIBE_STD);
-      // Battery bitmaps
-      s_image_set_std.battery = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BATTERY_STD);
-      s_image_set_std.battery_low = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BATTERY_LOW_REV);
-      s_image_set_std.battery_very_low = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BATTERY_VERY_LOW_REV);
-      s_image_set_std.battery_ch = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BATTERY_CH_REV);
-    break;
-    case 2:
-      // Bluetooth bitmaps
-      s_image_set_std.bt_conn = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_CONNECTED_REV);
-      s_image_set_std.bt_disc = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_DISCONNECTED_REV);
-      // Quiet Time bitmaps
-      s_image_set_std.quiet_on = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_QUIET_REV);
-      s_image_set_std.quiet_off = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_VIBE_REV);
-      // Battery bitmaps
-      s_image_set_std.battery = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BATTERY_REV);
-      s_image_set_std.battery_low = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BATTERY_LOW_REV);
-      s_image_set_std.battery_very_low = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BATTERY_VERY_LOW_REV);
-      s_image_set_std.battery_ch = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BATTERY_CH_REV);
-    break;
-    default:
-    break;
+  }
+  else{  
+    switch(settings.background_color){
+      case 0:
+        // Bluetooth bitmaps
+        s_image_set_std.bt_conn = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_CONNECTED_STD);
+        s_image_set_std.bt_disc = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_DISCONNECTED_STD);
+        // Quiet Time bitmaps
+        s_image_set_std.quiet_on = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_QUIET_STD);
+        s_image_set_std.quiet_off = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_VIBE_STD);
+        // Battery bitmaps
+        s_image_set_std.battery = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BATTERY_STD);
+        s_image_set_std.battery_low = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BATTERY_LOW_REV);
+        s_image_set_std.battery_very_low = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BATTERY_VERY_LOW_REV);
+        s_image_set_std.battery_ch = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BATTERY_CH_REV);
+      break;
+      case 1:
+        // Bluetooth bitmaps
+        s_image_set_std.bt_conn = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_CONNECTED_REV);
+        s_image_set_std.bt_disc = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_DISCONNECTED_REV);
+        // Quiet Time bitmaps
+        s_image_set_std.quiet_on = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_QUIET_REV);
+        s_image_set_std.quiet_off = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_VIBE_REV);
+        // Battery bitmaps
+        s_image_set_std.battery = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BATTERY_REV);
+        s_image_set_std.battery_low = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BATTERY_LOW_REV);
+        s_image_set_std.battery_very_low = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BATTERY_VERY_LOW_REV);
+        s_image_set_std.battery_ch = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BATTERY_CH_REV);
+      break;
+      default:
+        // Bluetooth bitmaps
+        s_image_set_std.bt_conn = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_CONNECTED_STD);
+        s_image_set_std.bt_disc = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_DISCONNECTED_STD);
+        // Quiet Time bitmaps
+        s_image_set_std.quiet_on = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_QUIET_STD);
+        s_image_set_std.quiet_off = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_VIBE_STD);
+        // Battery bitmaps
+        s_image_set_std.battery = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BATTERY_STD);
+        s_image_set_std.battery_low = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BATTERY_LOW_REV);
+        s_image_set_std.battery_very_low = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BATTERY_VERY_LOW_REV);
+        s_image_set_std.battery_ch = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BATTERY_CH_REV);
+      break;
+    }
   }
   
   Layer *window_layer = window_get_root_layer(window);

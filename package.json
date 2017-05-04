@@ -12,12 +12,17 @@
         "displayName": "Q-Time",
         "enableMultiJS": true,
         "messageKeys": [
-            "colors",
+            "background_color",
             "time_format",
             "day_font",
             "date_font",
             "time_font",
-            "background_color"
+            "background_color",
+            "time_color",
+            "day_color",
+            "date_color",
+            "dial_color",
+            "default_settings"
         ],
         "projectType": "native",
         "resources": {

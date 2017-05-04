@@ -15,25 +15,51 @@ module.exports = [
         "defaultValue": "Color settings"
       },
       {
+        "type": "toggle",
+        "messageKey": "default_settings",
+        "label": "Use Default color scheme",
+        "defaultValue": true
+      },
+      {
         "type": "radiogroup",
-        "messageKey": "colors",
+        "messageKey": "background_color",
         "label": "Choose your color set:",
         "defaultValue": "0",
         "options": [
           { 
-            "label": "Default", 
+            "label": "Dark", 
             "value": "0" 
           },
           { 
-            "label": "Dark", 
-            "value": "1" 
-          },
-          { 
             "label": "Light", 
-            "value": "2" 
+            "value": "1" 
           }
         ]
-      }
+      },
+      {
+        "type": "color",
+        "messageKey": "time_color",
+        "defaultValue": "fffffff",
+        "label": "Time Color",
+      },
+      {
+        "type": "color",
+        "messageKey": "day_color",
+        "defaultValue": "fffffff",
+        "label": "Day Color"
+      },
+      {
+        "type": "color",
+        "messageKey": "date_color",
+        "defaultValue": "fffffff",
+        "label": "Date Color"
+      },
+      {
+        "type": "color",
+        "messageKey": "dial_color",
+        "defaultValue": "fffffff",
+        "label": "Dial Color"
+      }   
     ]
   },
   {

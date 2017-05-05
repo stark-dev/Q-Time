@@ -12,61 +12,6 @@ module.exports = [
     "items": [
       {
         "type": "heading",
-        "defaultValue": "Color settings"
-      },
-      {
-        "type": "toggle",
-        "messageKey": "default_settings",
-        "label": "Use Default color scheme",
-        "defaultValue": true
-      },
-      {
-        "type": "radiogroup",
-        "messageKey": "background_color",
-        "label": "Choose your color set:",
-        "defaultValue": "0",
-        "options": [
-          { 
-            "label": "Dark", 
-            "value": "0" 
-          },
-          { 
-            "label": "Light", 
-            "value": "1" 
-          }
-        ]
-      },
-      {
-        "type": "color",
-        "messageKey": "time_color",
-        "defaultValue": "fffffff",
-        "label": "Time Color",
-      },
-      {
-        "type": "color",
-        "messageKey": "day_color",
-        "defaultValue": "fffffff",
-        "label": "Day Color"
-      },
-      {
-        "type": "color",
-        "messageKey": "date_color",
-        "defaultValue": "fffffff",
-        "label": "Date Color"
-      },
-      {
-        "type": "color",
-        "messageKey": "dial_color",
-        "defaultValue": "fffffff",
-        "label": "Dial Color"
-      }   
-    ]
-  },
-  {
-    "type": "section",
-    "items": [
-      {
-        "type": "heading",
         "defaultValue": "Time Settings"
       },
       {
@@ -84,6 +29,13 @@ module.exports = [
             "value": "1" 
           }
         ]
+      },
+      {
+        "type": "toggle",
+        "messageKey": "leading_zero",
+        "label": "Show leading zero in time",
+        "description": "Active 01:23, Disabled 1:23",
+        "defaultValue": true
       }
     ]
   },
@@ -154,6 +106,62 @@ module.exports = [
           }
         ]
       }
+    ]
+  },
+  {
+    "type": "section",
+    "items": [
+      {
+        "type": "heading",
+        "defaultValue": "Color settings"
+      },
+      {
+        "type": "toggle",
+        "messageKey": "default_colors",
+        "label": "Use Default color scheme",
+        "description": "Disable this option in order to set custom colors",
+        "defaultValue": true
+      },
+      {
+        "type": "radiogroup",
+        "messageKey": "background_color",
+        "label": "Choose your color set:",
+        "defaultValue": "0",
+        "options": [
+          { 
+            "label": "Dark", 
+            "value": "0" 
+          },
+          { 
+            "label": "Light", 
+            "value": "1" 
+          }
+        ]
+      },
+      {
+        "type": "color",
+        "messageKey": "time_color",
+        "defaultValue": "ffffff",
+        "label": "Time Color",
+      },
+      {
+        "type": "color",
+        "messageKey": "day_color",
+        "defaultValue": "ffffff",
+        "label": "Day Color"
+      },
+      {
+        "type": "color",
+        "messageKey": "date_color",
+        "defaultValue": "ffffff",
+        "label": "Date Color"
+      },
+      {
+        "type": "color",
+        "messageKey": "dial_color",
+        "defaultValue": "ffffff",
+        "label": "Dial Color"
+      }   
     ]
   },
   {

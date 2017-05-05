@@ -5,13 +5,14 @@
 
 // Define settings struct
 typedef struct ClaySettings {
-  bool   default_settings;
+  bool   default_colors;
   char   background_color;
   GColor time_color;
   GColor day_color;
   GColor date_color;
   GColor dial_color;
   char   time_format;
+  bool   leading_zero;
   char   time_font_size;
   char   day_font_size;
   char   date_font_size;
@@ -60,6 +61,8 @@ static bool      s_bt_connected = false;
 // Static variables - vibration
 static bool      s_vibration = false;
 // Static variables - text
+static char      h_time[] = "00";
+static char      m_time[] = "00";
 static char      s_time_text[] = "00:00";
 static char      s_date_text[] = "02 Dec";
 static char      s_day_text[] = "Wednesday";
@@ -103,7 +106,7 @@ static void bluetooth_callback(bool connected) {
 
 // Set colors
 static void load_colors() {
-  if(settings.default_settings){
+  if(settings.default_colors){
     // Standard set
       s_color_set.background_color = GColorBlack;
       s_color_set.time_color = GColorFromRGB(251, 216, 62);
@@ -156,7 +159,7 @@ static void load_colors() {
 // Clay interface
 // Initialize the default settings
 static void prv_default_settings() {
-  settings.default_settings = true;
+  settings.default_colors = true;
   settings.background_color = 0;
   settings.time_color = GColorWhite;
   settings.day_color = GColorWhite;
@@ -182,13 +185,40 @@ static void prv_save_settings() {
 }
 
 static void prv_inbox_received_handler(DictionaryIterator *iter, void *context) {
-  // Read default settings preferences
-  Tuple *default_settings_t = dict_find(iter, MESSAGE_KEY_default_settings);
-  if(default_settings_t) {
-    settings.default_settings = default_settings_t->value->int32 == 1;
+  
+  // Read time format preferences
+  Tuple *time_format_t = dict_find(iter, MESSAGE_KEY_time_format);
+  if(time_format_t) {
+    settings.time_format = time_format_t->value->uint8 - '0';
   }
-
+  
+  Tuple *leading_zero_t = dict_find(iter, MESSAGE_KEY_leading_zero);
+  if(leading_zero_t) {
+    settings.leading_zero = leading_zero_t->value->int32 == 1;
+  }
+  
+  // Read fonts preferences
+  Tuple *time_font_size_t = dict_find(iter, MESSAGE_KEY_time_font);
+  if(time_font_size_t) {
+    settings.time_font_size = time_font_size_t->value->uint8 - '0';
+  }
+  
+  Tuple *day_font_size_t = dict_find(iter, MESSAGE_KEY_day_font);
+  if(day_font_size_t) {
+    settings.day_font_size = day_font_size_t->value->uint8 - '0';
+  }
+  
+  Tuple *date_font_size_t = dict_find(iter, MESSAGE_KEY_date_font);
+  if(date_font_size_t) {
+    settings.date_font_size = date_font_size_t->value->uint8 - '0';
+  }
+  
   // Read color preferences
+  Tuple *default_colors_t = dict_find(iter, MESSAGE_KEY_default_colors);
+  if(default_colors_t) {
+    settings.default_colors = default_colors_t->value->int32 == 1;
+  }
+  
   Tuple *background_color_t = dict_find(iter, MESSAGE_KEY_background_color);
   if(background_color_t) {
     settings.background_color = background_color_t->value->uint8 - '0';
@@ -214,27 +244,6 @@ static void prv_inbox_received_handler(DictionaryIterator *iter, void *context) 
     settings.dial_color = GColorFromHEX(dial_color_t->value->int32);
   }
   
-  // Read time format preferences
-  Tuple *time_format_t = dict_find(iter, MESSAGE_KEY_time_format);
-  if(time_format_t) {
-    settings.time_format = time_format_t->value->uint8 - '0';
-  }
-  
-  // Read fonts preferences
-  Tuple *time_font_size_t = dict_find(iter, MESSAGE_KEY_time_font);
-  if(time_font_size_t) {
-    settings.time_font_size = time_font_size_t->value->uint8 - '0';
-  }
-  
-  Tuple *day_font_size_t = dict_find(iter, MESSAGE_KEY_day_font);
-  if(day_font_size_t) {
-    settings.day_font_size = day_font_size_t->value->uint8 - '0';
-  }
-  
-  Tuple *date_font_size_t = dict_find(iter, MESSAGE_KEY_date_font);
-  if(date_font_size_t) {
-    settings.date_font_size = date_font_size_t->value->uint8 - '0';
-  }
   prv_save_settings();
 }
 
@@ -331,7 +340,22 @@ static void update_canvas(Layer *layer, GContext *ctx){
     
   // Update text
   //strftime(s_time_text, sizeof(s_time_text), clock_is_24h_style() ? "%H:%M" : "%I:%M", tick_time);
-  strftime(s_time_text, sizeof(s_time_text), (settings.time_format == 0) ? "%H:%M" : "%I:%M", tick_time);
+  //strftime(s_time_text, sizeof(s_time_text), (settings.time_format == 0) ? "%H:%M" : "%I:%M", tick_time);
+  
+  strftime(h_time, sizeof(h_time), (settings.time_format == 0) ? "%H" : "%I", tick_time);
+  strftime(m_time, sizeof(m_time), "%M", tick_time);
+  
+  if ((!settings.leading_zero) && (h_time[0] == '0')){
+    strcpy(s_time_text, h_time+1);
+    strcat(s_time_text, ":");
+    strcat(s_time_text, m_time);
+  }
+  else {
+    strcpy(s_time_text, h_time);
+    strcat(s_time_text, ":");
+    strcat(s_time_text, m_time);
+  }
+
   text_layer_set_text(s_time_layer, s_time_text);
 
   strftime(s_date_text, sizeof(s_date_text), "%d %b", tick_time);
@@ -357,7 +381,7 @@ static void main_window_load(Window *window) {
   s_lato_font_16 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_LATO_FONT_16));
   
   // Load images
-  if (settings.default_settings){
+  if (settings.default_colors){
       // Bluetooth bitmaps
       s_image_set_std.bt_conn = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_CONNECTED_STD);
       s_image_set_std.bt_disc = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_DISCONNECTED_STD);
@@ -564,3 +588,4 @@ int main(void) {
   app_event_loop();
   deinit();
 }
+

@@ -125,15 +125,15 @@ module.exports = [
       {
         "type": "radiogroup",
         "messageKey": "background_color",
-        "label": "Choose your color set:",
+        "label": "Choose background color:",
         "defaultValue": "0",
         "options": [
           { 
-            "label": "Dark", 
+            "label": "Black", 
             "value": "0" 
           },
           { 
-            "label": "Light", 
+            "label": "White", 
             "value": "1" 
           }
         ]

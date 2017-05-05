@@ -166,6 +166,7 @@ static void prv_default_settings() {
   settings.date_color = GColorWhite;
   settings.dial_color = GColorWhite;
   settings.time_format = 0;
+  settings.leading_zero = true;
   settings.time_font_size = 2;
   settings.day_font_size = 0;
   settings.date_font_size = 1;
